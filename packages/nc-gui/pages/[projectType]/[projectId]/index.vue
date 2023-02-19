@@ -339,39 +339,39 @@ useEventListener(document, 'keydown', async (e: KeyboardEvent) => {
                   </template>
                   <template v-if="!isSharedBase">
                     <!-- Copy Project Info -->
-                    <a-menu-item key="copy">
-                      <div
-                        v-e="['c:navbar:user:copy-proj-info']"
-                        class="nc-project-menu-item group"
-                        @click.stop="copyProjectInfo"
-                      >
-                        <MdiContentCopy class="group-hover:text-accent" />
-                        {{ $t('activity.account.projInfo') }}
-                      </div>
-                    </a-menu-item>
+                    <!--                    <a-menu-item key="copy"> -->
+                    <!--                      <div -->
+                    <!--                        v-e="['c:navbar:user:copy-proj-info']" -->
+                    <!--                        class="nc-project-menu-item group" -->
+                    <!--                        @click.stop="copyProjectInfo" -->
+                    <!--                      > -->
+                    <!--                        <MdiContentCopy class="group-hover:text-accent" /> -->
+                    <!--                        {{ $t('activity.account.projInfo') }} -->
+                    <!--                      </div> -->
+                    <!--                    </a-menu-item> -->
 
-                    <a-menu-divider />
+                    <!--                    <a-menu-divider /> -->
 
                     <!-- Swagger: Rest APIs -->
-                    <a-menu-item key="api">
-                      <div
-                        v-if="isUIAllowed('apiDocs')"
-                        v-e="['e:api-docs']"
-                        class="nc-project-menu-item group"
-                        @click.stop="openLink(`/api/v1/db/meta/projects/${route.params.projectId}/swagger`, appInfo.ncSiteUrl)"
-                      >
-                        <MdiApi class="group-hover:text-accent" />
-                        {{ $t('activity.account.swagger') }}
-                      </div>
-                    </a-menu-item>
+                    <!--                    <a-menu-item key="api"> -->
+                    <!--                      <div -->
+                    <!--                        v-if="isUIAllowed('apiDocs')" -->
+                    <!--                        v-e="['e:api-docs']" -->
+                    <!--                        class="nc-project-menu-item group" -->
+                    <!--                        @click.stop="openLink(`/api/v1/db/meta/projects/${route.params.projectId}/swagger`, appInfo.ncSiteUrl)" -->
+                    <!--                      > -->
+                    <!--                        <MdiApi class="group-hover:text-accent" /> -->
+                    <!--                        {{ $t('activity.account.swagger') }} -->
+                    <!--                      </div> -->
+                    <!--                    </a-menu-item> -->
 
                     <!-- Copy Auth Token -->
-                    <a-menu-item key="copy">
-                      <div v-e="['a:navbar:user:copy-auth-token']" class="nc-project-menu-item group" @click.stop="copyAuthToken">
-                        <MdiScriptTextKeyOutline class="group-hover:text-accent" />
-                        {{ $t('activity.account.authToken') }}
-                      </div>
-                    </a-menu-item>
+                    <!--                    <a-menu-item key="copy"> -->
+                    <!--                      <div v-e="['a:navbar:user:copy-auth-token']" class="nc-project-menu-item group" @click.stop="copyAuthToken"> -->
+                    <!--                        <MdiScriptTextKeyOutline class="group-hover:text-accent" /> -->
+                    <!--                        {{ $t('activity.account.authToken') }} -->
+                    <!--                      </div> -->
+                    <!--                    </a-menu-item> -->
 
                     <a-menu-divider />
 

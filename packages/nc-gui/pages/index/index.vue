@@ -21,22 +21,22 @@ useSidebar('nc-left-sidebar', { hasSidebar: false })
         <NuxtPage :transition="false" />
       </div>
 
-      <div
-        :class="{ 'flex-1': route.name === 'index-index' }"
-        class="flex gap-6 flex-col justify-center items-center md:(flex-row justify-between items-start)"
-      >
-        <template v-if="route.name === 'index-index'">
-          <TransitionGroup name="page" mode="out-in">
-            <div key="social-card">
-              <LazyGeneralSocialCard />
-            </div>
+      <!--      <div -->
+      <!--        :class="{ 'flex-1': route.name === 'index-index' }" -->
+      <!--        class="flex gap-6 flex-col justify-center items-center md:(flex-row justify-between items-start)" -->
+      <!--      > -->
+      <!--        <template v-if="route.name === 'index-index'"> -->
+      <!--          <TransitionGroup name="page" mode="out-in"> -->
+      <!--            <div key="social-card"> -->
+      <!--              <LazyGeneralSocialCard /> -->
+      <!--            </div> -->
 
-            <!--            <div key="sponsors" class="inline-block xl:hidden"> -->
-            <!--              <LazyGeneralSponsors /> -->
-            <!--            </div> -->
-          </TransitionGroup>
-        </template>
-      </div>
+      <!--            <div key="sponsors" class="inline-block xl:hidden"> -->
+      <!--              <LazyGeneralSponsors /> -->
+      <!--            </div> -->
+      <!--          </TransitionGroup> -->
+      <!--        </template> -->
+      <!--      </div> -->
     </div>
   </NuxtLayout>
 </template>
