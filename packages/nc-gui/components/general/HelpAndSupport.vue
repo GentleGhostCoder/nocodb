@@ -1,17 +1,17 @@
 <script lang="ts" setup>
-import { ref, useGlobal, useProject, useRoute } from '#imports'
+import { ref } from '#imports'
 
 const showDrawer = ref(false)
 
-const { appInfo } = useGlobal()
+// const { appInfo } = useGlobal()
 
-const { project } = useProject()
+// const { project } = useProject()
 
-const route = useRoute()
+// const route = useRoute()
 
-const openSwaggerLink = () => {
-  openLink(`/api/v1/db/meta/projects/${route.params.projectId}/swagger`, appInfo.value.ncSiteUrl)
-}
+// const openSwaggerLink = () => {
+//   openLink(`/api/v1/db/meta/projects/${route.params.projectId}/swagger`, appInfo.value.ncSiteUrl)
+// }
 </script>
 
 <template>
@@ -39,24 +39,24 @@ const openSwaggerLink = () => {
       <a-typography-title :level="4" class="!mb-6 !text-gray-500">{{ $t('title.helpCenter') }}</a-typography-title>
 
       <LazyGeneralSocialCard class="!w-full nc-social-card">
-        <template #before>
-          <a-list-item v-if="project">
-            <nuxt-link
-              v-e="['a:navbar:user:swagger']"
-              no-prefetch
-              no-rel
-              class="!no-underline !text-current py-4 font-semibold"
-              target="_blank"
-              @click="openSwaggerLink"
-            >
-              <div class="ml-3 flex items-center text-sm">
-                <LogosSwagger />
-                <!--            Swagger Documentation -->
-                <span class="ml-3">{{ project.title }} : {{ $t('title.swaggerDocumentation') }}</span>
-              </div>
-            </nuxt-link>
-          </a-list-item>
-        </template>
+        <!--              <template #before> -->
+        <!--                <a-list-item v-if="project"> -->
+        <!--                  <nuxt-link -->
+        <!--                    v-e="['a:navbar:user:swagger']" -->
+        <!--                    no-prefetch -->
+        <!--                    no-rel -->
+        <!--                    class="!no-underline !text-current py-4 font-semibold" -->
+        <!--                    target="_blank" -->
+        <!--                    @click="openSwaggerLink" -->
+        <!--                  > -->
+        <!--                    <div class="ml-3 flex items-center text-sm"> -->
+        <!--                      <LogosSwagger /> -->
+        <!--                      &lt;!&ndash;            Swagger Documentation &ndash;&gt; -->
+        <!--                      <span class="ml-3">{{ project.title }} : {{ $t('title.swaggerDocumentation') }}</span> -->
+        <!--                    </div> -->
+        <!--                  </nuxt-link> -->
+        <!--                </a-list-item> -->
+        <!--              </template> -->
       </LazyGeneralSocialCard>
 
       <div class="min-h-10 w-full" />

@@ -40,6 +40,13 @@ const isPercentageVal = (vals: any[], limitRows: number) =>
 const isMultiLineTextVal = (vals: any[], limitRows: number) =>
   isMultiLineTextType(vals.slice(0, limitRows).map((v: any) => v[1].v) as [])
 
+const isMultiOrSingleSelectVal = (vals: any[], limitRows: number, column: Record<string, any>) => {
+  const props = extractMultiOrSingleSelectProps(vals.slice(0, limitRows).map((v: any) => v[1].v.replace('\\', '_')) as [])
+  if (!props) return false
+  Object.assign(column, props)
+  return true
+}
+
 const isEmailVal = (vals: any[], limitRows: number) => isEmailType(vals.slice(0, limitRows).map((v: any) => v[1].v) as [])
 
 const isUrlVal = (vals: any[], limitRows: number) => isUrlType(vals.slice(0, limitRows).map((v: any) => v[1].v) as [])
@@ -65,6 +72,8 @@ const checkBoxFormatter = (cell: any) => getCheckboxValue(cell.v) || null
 
 const currencyFormatter = (cell: any) => cell.w.replace(/[^\d.]+/g, '') || null
 const percentFormatter = (cell: any) => parseFloat(cell.w.slice(0, -1)) / 100 || null
+
+const multiOrSingleSelectFormatter = (cell: any) => cell.w.replace('\\', '_') || null
 
 const isAllDate = (vals: any[], dateFormat: Record<string, number>) =>
   vals.every(([_, cell]) => {
@@ -212,16 +221,21 @@ export default class ExcelTemplateAdapter extends TemplateGenerator {
             }
 
             this.data[tableName] = []
+            const headerRanges: number[] = []
 
             Object.entries(ws as Record<string, any>)
               .slice(skippedValues.length + 1, skippedValues.length + range.e.c + 2)
               .forEach(([cellChar, headerCell]) => {
                 const cellIdx = this.xlsx.utils.decode_cell(cellChar)
+                if (headerRanges.includes(cellIdx.c)) {
+                  return
+                }
+                headerRanges.push(cellIdx.c)
                 if (cellIdx.r < 0) {
                   return
                 }
                 const vals = Object.entries(ws as Record<string, any>)
-                  .slice(skippedValues.length + +this.config.firstRowAsHeaders + 1, -1)
+                  .slice(1 + skippedValues.length + +this.config.firstRowAsHeaders + range.e.c + cellIdx.c, -1)
                   .filter(([key, _]) => this.xlsx.utils.decode_cell(key).c === cellIdx.c)
 
                 const maxCellIdx = vals.reduce((a: number, [v, _]) => {
@@ -232,7 +246,7 @@ export default class ExcelTemplateAdapter extends TemplateGenerator {
                 if (maxCellIdx > this.data[tableName].length) {
                   // prefill
                   this.data[tableName].push(
-                    ...Array(maxCellIdx - this.data[tableName].length + 1)
+                    ...Array(maxCellIdx - this.data[tableName].length)
                       .fill(null)
                       .map(() => ({})),
                   )
@@ -263,27 +277,27 @@ export default class ExcelTemplateAdapter extends TemplateGenerator {
 
                 switch (column.uidt) {
                   case UITypes.Number:
-                    if (isDecimalVal(vals, +this.config.firstRowAsHeaders)) {
+                    if (isDecimalVal(vals, this.config.maxRowsToParse)) {
                       column.uidt = UITypes.Decimal
                       this.addDataRows(tableName, columnName, vals, defaultFormater)
                       break
                     }
 
-                    if (isCurrencyVal(vals, +this.config.firstRowAsHeaders)) {
+                    if (isCurrencyVal(vals, this.config.maxRowsToParse)) {
                       // TODO: more currency types!
                       column.uidt = UITypes.Currency
                       this.addDataRows(tableName, columnName, vals, currencyFormatter)
                       break
                     }
 
-                    if (isPercentageVal(vals, +this.config.firstRowAsHeaders)) {
+                    if (isPercentageVal(vals, this.config.maxRowsToParse)) {
                       column.uidt = UITypes.Percent
                       this.addDataRows(tableName, columnName, vals, percentFormatter)
                       break
                     }
 
                     // fallback to SingleLineText -> i think this is not really required
-                    if (!isNumberVal(vals, +this.config.firstRowAsHeaders)) {
+                    if (!isNumberVal(vals, this.config.maxRowsToParse)) {
                       column.uidt = UITypes.SingleLineText
                     }
 
@@ -314,30 +328,30 @@ export default class ExcelTemplateAdapter extends TemplateGenerator {
                     break
 
                   default:
-                    if (isMultiLineTextVal(vals, +this.config.firstRowAsHeaders)) {
+                    if (isMultiLineTextVal(vals, this.config.maxRowsToParse)) {
                       column.uidt = UITypes.LongText
                       this.addDataRows(tableName, columnName, vals, defaultFormater)
                       break
                     }
-                    if (isEmailVal(vals, +this.config.firstRowAsHeaders)) {
+                    if (isEmailVal(vals, this.config.maxRowsToParse)) {
                       column.uidt = UITypes.Email
                       this.addDataRows(tableName, columnName, vals, defaultFormater)
                       break
                     }
-                    if (isUrlVal(vals, +this.config.firstRowAsHeaders)) {
+                    if (isUrlVal(vals, this.config.maxRowsToParse)) {
                       column.uidt = UITypes.URL
                       this.addDataRows(tableName, columnName, vals, defaultFormater)
                       break
                     }
-                    if (isCheckboxVal(vals, +this.config.firstRowAsHeaders)) {
+                    if (isCheckboxVal(vals, this.config.maxRowsToParse)) {
                       column.uidt = UITypes.Checkbox
                       this.addDataRows(tableName, columnName, vals, checkBoxFormatter)
                       break
                     }
-                    Object.assign(
-                      column,
-                      extractMultiOrSingleSelectProps(vals.slice(0, this.config.maxRowsToParse).map((v: any) => v[1].v) as []),
-                    )
+                    if (isMultiOrSingleSelectVal(vals, this.config.maxRowsToParse, column)) {
+                      this.addDataRows(tableName, columnName, vals, multiOrSingleSelectFormatter)
+                      break
+                    }
                     this.addDataRows(tableName, columnName, vals, defaultFormater)
                     break
                 }

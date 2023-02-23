@@ -34,7 +34,9 @@ export const useProject = createSharedComposable(() => {
   const projectLoadedHook = createEventHook<ProjectType>()
 
   const project = ref<ProjectType>({})
-  const bases = computed<BaseType[]>(() => project.value?.bases?.filter((base: BaseType) => base.enabled) || [])
+
+  const bases = computed<BaseType[]>(() => project.value?.bases || [])
+
   const tables = ref<TableType[]>([])
 
   const projectMetaInfo = ref<ProjectMetaInfo | undefined>()

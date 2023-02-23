@@ -166,6 +166,7 @@ declare module '@vue/runtime-core' {
     MdiDramaMasks: typeof import('~icons/mdi/drama-masks')['default']
     MdiEditOutline: typeof import('~icons/mdi/edit-outline')['default']
     MdiEmail: typeof import('~icons/mdi/email')['default']
+    MdiEmailAlert: typeof import('~icons/mdi/email-alert')['default']
     MdiEmailArrowRightOutline: typeof import('~icons/mdi/email-arrow-right-outline')['default']
     MdiExitToApp: typeof import('~icons/mdi/exit-to-app')['default']
     MdiExport: typeof import('~icons/mdi/export')['default']

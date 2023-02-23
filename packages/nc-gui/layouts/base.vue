@@ -3,6 +3,8 @@ import { computed, navigateTo, ref, useGlobal, useNuxtApp, useRoute, useSidebar 
 
 const { signOut, signedIn, isLoading, user, currentVersion } = useGlobal()
 
+const logoUrl = useRuntimeConfig().LOGO || '/_nuxt/assets/img/brand/nocodb-full-color.png'
+
 useSidebar('nc-left-sidebar', { hasSidebar: false })
 
 const route = useRoute()
@@ -50,7 +52,7 @@ hooks.hook('page:finish', () => {
               {{ currentVersion }}
             </template>
             <div class="flex items-center gap-2">
-              <img v-if="!isDashboard" width="120" alt="NocoDB" src="~/assets/img/brand/nocodb-full-color.png" />
+              <img v-if="!isDashboard" width="120" alt="NocoDB" :src="logoUrl" />
               <img v-else width="25" alt="NocoDB" src="~/assets/img/icons/512x512.png" />
             </div>
           </a-tooltip>

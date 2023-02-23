@@ -16,7 +16,6 @@ import {
   themeV2Colors,
   useApi,
   useBreakpoints,
-  useCopy,
   useNuxtApp,
   useUIPermission,
 } from '#imports'
@@ -129,17 +128,17 @@ const customRow = (record: ProjectType) => ({
 
 onBeforeMount(loadProjects)
 
-const { copy } = useCopy()
+// const { copy } = useCopy()
 
-const copyProjectMeta = async () => {
-  try {
-    const aggregatedMetaInfo = await $api.utils.aggregatedMetaInfo()
-    await copy(JSON.stringify(aggregatedMetaInfo))
-    message.info('Copied aggregated project meta to clipboard')
-  } catch (e) {
-    message.error(await extractSdkResponseErrorMsg(e))
-  }
-}
+// const copyProjectMeta = async () => {
+//   try {
+//     const aggregatedMetaInfo = await $api.utils.aggregatedMetaInfo()
+//     await copy(JSON.stringify(aggregatedMetaInfo))
+//     message.info('Copied aggregated project meta to clipboard')
+//   } catch (e) {
+//     message.error(await extractSdkResponseErrorMsg(e))
+//   }
+// }
 </script>
 
 <template>
