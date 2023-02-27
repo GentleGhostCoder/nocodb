@@ -157,6 +157,12 @@ export default defineNuxtConfig({
       'process.env.DEBUG': 'false',
       'process.nextTick': () => {},
       'process.env.ANT_MESSAGE_DURATION': process.env.ANT_MESSAGE_DURATION,
+      // Change Logo for NOCODB if nessesary
+      'process.env.PROJECTS_TITLE': `'${process.env.PROJECTS_TITLE}'`,
+      'process.env.LOGO': `'${process.env.LOGO || '/assets/img/brand/nocodb-full-color.png'}'`,
+      'process.env.LOGO_WIDTH': `'${process.env.LOGO_WIDTH || 'auto'}'`,
+      'process.env.ICON': `'${process.env.ICON || '/assets/img/brand/nocodb-full-color.png'}'`,
+      'process.env.ICON_WIDTH': `${process.env.ICON_WIDTH || 90}`,
     },
     server: {
       watch: {

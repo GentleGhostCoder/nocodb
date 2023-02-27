@@ -35,11 +35,11 @@ export const enumColor = {
 export const themeColors = {
   'background': '#FFFFFF',
   'surface': '#FFFFFF',
-  'primary': '#4351e8',
-  'secondary': '#03DAC6',
-  'secondary-darken-1': '#018786',
+  'primary': '#F82B60',
+  'secondary': '#da0303',
+  'secondary-darken-1': '#870101',
   'error': '#B00020',
-  'info': '#2196F3',
+  'info': '#f32121',
   'success': '#4CAF50',
   'warning': '#FB8C00',
 }
@@ -60,8 +60,23 @@ export const themeV2Colors = {
     '900': '#080D42',
   },
 
+  'royal-red': {
+    'DEFAULT': '#F82B60',
+    '50': '#FEE7E9',
+    '100': '#FCD4D8',
+    '200': '#F9B0B6',
+    '300': '#F68C94',
+    '400': '#F36773',
+    '500': '#F14251',
+    '600': '#E81A2B',
+    '700': '#A61421',
+    '800': '#74120E',
+    '900': '#420808',
+  },
+
   /** Accent shades */
   'pink': colors.pink,
+  'red': colors.red,
 }
 
 const isValidHex = (hex: string) => /^#([A-Fa-f0-9]{3,4}){1,2}$/.test(hex)
@@ -85,14 +100,16 @@ export const hexToRGB = (hex: string) => {
 }
 
 export const projectThemeColors = [
-  themeV2Colors['royal-blue'].DEFAULT,
+  // themeV2Colors['royal-blue'].DEFAULT,
+  '#333333',
+  themeV2Colors['royal-red'].DEFAULT,
   '#2D7FF9',
   '#18BFFF',
-  '#60DAD5',
+  '#941737',
+  '#ff98b3',
+  '#8A2170',
   '#EC2CBD',
-  '#F82B60',
   '#F57134',
-  '#1BAF2C',
   '#8B46FF',
   '#1B51A2',
   '#146C8E',
@@ -102,5 +119,4 @@ export const projectThemeColors = [
   '#B94915',
   '#0E4C15',
   '#381475',
-  '#333333',
 ]

@@ -28,6 +28,8 @@ import {
   useUIPermission,
 } from '#imports'
 
+const icon = process.env.ICON
+
 definePageMeta({
   hideHeader: true,
 })
@@ -88,7 +90,7 @@ const handleThemeColor = async (mode: 'swatch' | 'primary' | 'accent', color?: s
 
       const tcolor = tinycolor(color)
       if (tcolor.isValid()) {
-        const complement = tcolor.complement()
+        const complement = tcolor.isLight() ? tcolor.darken(20) : tcolor.lighten(20)
 
         await saveTheme({
           primaryColor: color,
@@ -266,7 +268,7 @@ useEventListener(document, 'keydown', async (e: KeyboardEvent) => {
               <template #title>
                 {{ currentVersion }}
               </template>
-              <img width="25" class="-mr-1" alt="NocoDB" src="~/assets/img/icons/512x512.png" />
+              <img width="25" class="-mr-1" alt="NocoDB" :src="icon" />
             </a-tooltip>
           </div>
 

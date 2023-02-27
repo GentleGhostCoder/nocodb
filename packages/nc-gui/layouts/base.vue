@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import { computed, navigateTo, ref, useGlobal, useNuxtApp, useRoute, useSidebar } from '#imports'
 
-const { signOut, signedIn, isLoading, user, currentVersion } = useGlobal()
+const logo = process.env.LOGO
+const icon = process.env.ICON
 
-const logoUrl = useRuntimeConfig().LOGO || '/_nuxt/assets/img/brand/nocodb-full-color.png'
+const { signOut, signedIn, isLoading, user, currentVersion } = useGlobal()
 
 useSidebar('nc-left-sidebar', { hasSidebar: false })
 
@@ -52,8 +53,8 @@ hooks.hook('page:finish', () => {
               {{ currentVersion }}
             </template>
             <div class="flex items-center gap-2">
-              <img v-if="!isDashboard" width="120" alt="NocoDB" :src="logoUrl" />
-              <img v-else width="25" alt="NocoDB" src="~/assets/img/icons/512x512.png" />
+              <img v-if="!isDashboard" width="120" alt="NocoDB" :src="logo" />
+              <img v-else width="25" alt="NocoDB" :src="icon" />
             </div>
           </a-tooltip>
         </div>
@@ -68,12 +69,12 @@ hooks.hook('page:finish', () => {
 
         <div class="flex-1" />
 
-        <LazyGeneralReleaseInfo />
+        <!--        <LazyGeneralReleaseInfo /> -->
 
         <a-tooltip placement="bottom" :mouse-enter-delay="1">
-          <template #title> Switch language</template>
+          <template #title>Switch language</template>
 
-          <div class="flex pr-4 items-center text-white">
+          <div class="flex pr-4 items-center">
             <LazyGeneralLanguage class="cursor-pointer text-2xl hover:text-accent" />
           </div>
         </a-tooltip>

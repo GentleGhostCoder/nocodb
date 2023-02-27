@@ -1,12 +1,11 @@
 <script lang="ts" setup>
 import { autoResetRef, useThrottleFn } from '#imports'
-
+const { size = process.env.ICON_WIDTH, animate = false } = defineProps<Props>()
+const icon = process.env.ICON
 interface Props {
   size?: number
   animate?: boolean
 }
-
-const { size = 90, animate = false } = defineProps<Props>()
 
 const ping = autoResetRef(false, 1000)
 
@@ -22,8 +21,8 @@ const onClick = useThrottleFn(() => {
     @click="onClick"
   >
     <div class="relative">
-      <img class="hidden dark:block" :width="size" :height="size" alt="NocoDB" src="~/assets/img/icons/512x512-trans.png" />
-      <img class="dark:hidden" :width="size" :height="size" alt="NocoDB" src="~/assets/img/icons/512x512.png" />
+      <!--      <img class="hidden dark:block" :width="size" :height="size" alt="NocoDB" src="~/assets/img/icons/512x512-trans.png" /> -->
+      <img class="dark:hidden" :width="size" :height="size" alt="NocoDB" :src="icon" />
 
       <TransitionGroup name="layout" :duration="500">
         <template v-if="animate || ping">

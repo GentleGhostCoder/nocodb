@@ -73,7 +73,7 @@ const deleteProject = (project: ProjectType) => {
 
 const handleProjectColor = async (projectId: string, color: string) => {
   const tcolor = tinycolor(color)
-
+  console.log(tcolor)
   if (tcolor.isValid()) {
     const complement = tcolor.complement()
 
@@ -114,7 +114,7 @@ const getProjectPrimary = (project: ProjectType) => {
 
   const meta = project.meta && typeof project.meta === 'string' ? JSON.parse(project.meta) : project.meta || {}
 
-  return meta.theme?.primaryColor || themeV2Colors['royal-blue'].DEFAULT
+  return meta.theme?.primaryColor || themeV2Colors['royal-red'].DEFAULT
 }
 
 const customRow = (record: ProjectType) => ({

@@ -11,7 +11,7 @@ import type { Language } from '~/lib'
 
 export const viewIcons: Record<number | string, { icon: any; color: string }> = {
   [ViewTypes.GRID]: { icon: MdiGridIcon, color: '#8f96f2' },
-  [ViewTypes.FORM]: { icon: MdiFormIcon, color: themeV2Colors.pink['500'] },
+  [ViewTypes.FORM]: { icon: MdiFormIcon, color: themeV2Colors.red['900'] },
   calendar: { icon: MdiCalendarIcon, color: 'purple' },
   [ViewTypes.GALLERY]: { icon: MdiGalleryIcon, color: 'orange' },
   [ViewTypes.KANBAN]: { icon: MdiKanbanIcon, color: 'green' },
