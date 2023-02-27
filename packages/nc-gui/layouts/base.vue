@@ -16,8 +16,8 @@ const hasSider = ref(false)
 
 const sidebar = ref<HTMLDivElement>()
 
-const logout = () => {
-  signOut()
+const logout = async () => {
+  await signOut()
   navigateTo('/signin')
 }
 

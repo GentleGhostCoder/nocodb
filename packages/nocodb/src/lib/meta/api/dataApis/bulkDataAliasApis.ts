@@ -1,4 +1,5 @@
 import { Request, Response, Router } from 'express';
+import { BaseModelSqlv2 } from '../../../db/sql-data-mapper/lib/sql/BaseModelSqlv2';
 import Model from '../../../models/Model';
 import Base from '../../../models/Base';
 import NcConnectionMgrv2 from '../../../utils/common/NcConnectionMgrv2';
@@ -6,25 +7,33 @@ import ncMetaAclMw from '../../helpers/ncMetaAclMw';
 import { getViewAndModelFromRequestByAliasOrId } from './helpers';
 import apiMetrics from '../../helpers/apiMetrics';
 
-async function getModelAndBase(req: Request) {
+type BulkOperation =
+  | 'bulkInsert'
+  | 'bulkUpdate'
+  | 'bulkUpdateAll'
+  | 'bulkDelete'
+  | 'bulkDeleteAll';
+
+async function getModelViewBase(req: Request) {
   const { model, view } = await getViewAndModelFromRequestByAliasOrId(req);
+
   const base = await Base.get(model.base_id);
   return { model, view, base };
 }
 
-async function executeBulkOperation(
+async function executeBulkOperation<T extends BulkOperation>(
   req: Request,
   res: Response,
-  operation: string,
-  options: any = {}
+  operation: T,
+  options: Parameters<typeof BaseModelSqlv2.prototype[T]>
 ) {
-  const { model, view, base } = await getModelAndBase(req);
+  const { model, view, base } = await getModelViewBase(req);
   const baseModel = await Model.getBaseModelSQL({
     id: model.id,
     viewId: view?.id,
     dbDriver: NcConnectionMgrv2.get(base),
   });
-  res.json(await baseModel[operation](...options));
+  res.json(await baseModel[operation].apply(null, options));
 }
 
 async function bulkDataInsert(req: Request, res: Response) {
