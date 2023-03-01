@@ -1,14 +1,24 @@
 import { UITypes } from 'nocodb-sdk'
-import dayjs from 'dayjs'
 import TemplateGenerator from './TemplateGenerator'
 import {
-  extractMultiOrSingleSelectProps,
-  getCheckboxValue,
-  getDateFormat,
-  isCheckboxType,
-  isEmailType,
-  isMultiLineTextType,
-  isUrlType,
+  checkBoxFormatter,
+  currencyFormatter,
+  dateFormatter,
+  dateTimeFormatter,
+  defaultFormater,
+  defaultRawFormater,
+  isAllDate,
+  isCheckboxVal,
+  isEmailVal,
+  isIsoDateVal,
+  isMultiLineTextVal,
+  isMultiOrSingleSelectVal,
+  isNumberVal,
+  isUrlVal,
+  isoToDate,
+  multiOrSingleSelectFormatter,
+  percentFormatter,
+  specialCharRegex,
 } from '#imports'
 
 const excelTypeToUidt: Record<string, UITypes> = {
@@ -23,70 +33,11 @@ interface ParserConfig {
   maxRowsToParse: number
   shouldImportData: boolean
   normalizedNested?: boolean
-  dynamicHeaders?: boolean
+  dynamicHeaders?: boolean // TODO: not passed from Editor.vue
+  skipEmptyColumns?: boolean // TODO: not passed from Editor.vue
   decimalSeparator?: string // TODO: not used
   thousandsSeparator?: string // TODO: not used
 }
-
-const isDecimalVal = (vals: any[], limitRows: number) =>
-  vals.slice(0, limitRows).some((v) => !v[1].w || v[1].v?.toString().includes('.'))
-
-const isCurrencyVal = (vals: any[], limitRows: number) =>
-  vals.slice(0, limitRows).every((v) => !v[1].w || v[1].w?.toString().includes('$'))
-
-const isPercentageVal = (vals: any[], limitRows: number) =>
-  vals.slice(0, limitRows).every((v) => !v[1].w || v[1].w?.toString().includes('%'))
-
-const isMultiLineTextVal = (vals: any[], limitRows: number) =>
-  isMultiLineTextType(vals.slice(0, limitRows).map((v: any) => v[1].v) as [])
-
-const isMultiOrSingleSelectVal = (vals: any[], limitRows: number, column: Record<string, any>) => {
-  const props = extractMultiOrSingleSelectProps(vals.slice(0, limitRows).map((v: any) => v[1].v.replace('\\', '_')) as [])
-  if (!props) return false
-  Object.assign(column, props)
-  return true
-}
-
-const isEmailVal = (vals: any[], limitRows: number) => isEmailType(vals.slice(0, limitRows).map((v: any) => v[1].v) as [])
-
-const isUrlVal = (vals: any[], limitRows: number) => isUrlType(vals.slice(0, limitRows).map((v: any) => v[1].v) as [])
-
-const isCheckboxVal = (vals: any[], limitRows: number) =>
-  isCheckboxType(vals.slice(0, limitRows).map((v: any) => v[1].v) as []).length === 1
-
-const isNumberVal = (vals: any[], limitRows: number) =>
-  isUrlType(
-    vals
-      .slice(0, limitRows)
-      .map((v: any) => isNaN(v[1].w) || (v[1].w && !isNaN(Number(v[1].w)) && isNaN(parseFloat(v[1].w)))) as [],
-  )
-
-const defaultFormater = (cell: any) => cell.v || null
-
-const defaultRawFormater = (cell: any) => cell.w || null
-
-const dateFormatter = (cell: any, format: string) => dayjs(cell.v).format(format) || null
-const dateTimeFormatter = (cell: any) => cell.v || null
-
-const checkBoxFormatter = (cell: any) => getCheckboxValue(cell.v) || null
-
-const currencyFormatter = (cell: any) => cell.w.replace(/[^\d.]+/g, '') || null
-const percentFormatter = (cell: any) => parseFloat(cell.w.slice(0, -1)) / 100 || null
-
-const multiOrSingleSelectFormatter = (cell: any) => cell.w.replace('\\', '_') || null
-
-const isAllDate = (vals: any[], dateFormat: Record<string, number>) =>
-  vals.every(([_, cell]) => {
-    // TODO: more date types and more checks!
-    const onlyDate = !cell.w || cell.w?.split(' ').length === 1
-    if (onlyDate) {
-      const format = getDateFormat(cell.w)
-      dateFormat[format] = (dateFormat[format] || 0) + 1
-    }
-    return onlyDate
-  })
-
-const specialCharRegex = /[` ~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]/g
 
 export default class ExcelTemplateAdapter extends TemplateGenerator {
   config: ParserConfig
@@ -114,6 +65,7 @@ export default class ExcelTemplateAdapter extends TemplateGenerator {
       autoSelectFieldTypes: true,
       maxRowsToParse: 500,
       dynamicHeaders: true,
+      skipEmptyColumns: false,
       shouldImportData: true,
       normalizedNested: false,
     },
@@ -222,9 +174,10 @@ export default class ExcelTemplateAdapter extends TemplateGenerator {
 
             this.data[tableName] = []
             const headerRanges: number[] = []
+            const firstEntryIsRef = Object.keys(ws)[0] === '!ref'
 
             Object.entries(ws as Record<string, any>)
-              .slice(skippedValues.length + 1, skippedValues.length + range.e.c + 2)
+              .slice(skippedValues.length + +firstEntryIsRef, skippedValues.length + range.e.c + 1 + +firstEntryIsRef)
               .forEach(([cellChar, headerCell]) => {
                 const cellIdx = this.xlsx.utils.decode_cell(cellChar)
                 if (headerRanges.includes(cellIdx.c)) {
@@ -235,8 +188,8 @@ export default class ExcelTemplateAdapter extends TemplateGenerator {
                   return
                 }
                 const vals = Object.entries(ws as Record<string, any>)
-                  .slice(1 + skippedValues.length + +this.config.firstRowAsHeaders + range.e.c + cellIdx.c, -1)
                   .filter(([key, _]) => this.xlsx.utils.decode_cell(key).c === cellIdx.c)
+                  .slice(+this.config.firstRowAsHeaders, -1)
 
                 const maxCellIdx = vals.reduce((a: number, [v, _]) => {
                   const newIdx = this.xlsx.utils.decode_cell(v).r
@@ -246,7 +199,7 @@ export default class ExcelTemplateAdapter extends TemplateGenerator {
                 if (maxCellIdx > this.data[tableName].length) {
                   // prefill
                   this.data[tableName].push(
-                    ...Array(maxCellIdx - this.data[tableName].length)
+                    ...Array(maxCellIdx - this.data[tableName].length + +!this.config.firstRowAsHeaders)
                       .fill(null)
                       .map(() => ({})),
                   )
@@ -266,6 +219,12 @@ export default class ExcelTemplateAdapter extends TemplateGenerator {
                   meta: {},
                   uidt: UITypes.SingleLineText,
                 }
+
+                if (vals.length === 0) {
+                  if (!this.config.skipEmptyColumns) table.columns.push(column)
+                  return
+                }
+
                 table.columns.push(column)
 
                 if (!this.config.autoSelectFieldTypes) {
@@ -273,7 +232,7 @@ export default class ExcelTemplateAdapter extends TemplateGenerator {
                 }
 
                 // parse each column
-                column.uidt = excelTypeToUidt[vals[+this.config.firstRowAsHeaders][1].t] || UITypes.SingleLineText
+                column.uidt = excelTypeToUidt[vals[0][1].t] || UITypes.SingleLineText
 
                 switch (column.uidt) {
                   case UITypes.Number:
@@ -312,14 +271,7 @@ export default class ExcelTemplateAdapter extends TemplateGenerator {
                     for (const [_, cell] of vals) {
                       cell.v = this.fixImportedDate(cell.v)
                     }
-                    column.date_formats = {}
-                    if (isAllDate(vals, column.date_formats)) {
-                      column.uidt = UITypes.Date
-                      // take the date format with the max occurrence
-                      column.date_format =
-                        Object.keys(column.date_formats).reduce((x, y) =>
-                          column.date_formats[x] > column.date_formats[y] ? x : y,
-                        ) || 'YYYY/MM/DD'
+                    if (isAllDate(vals, column)) {
                       this.addDataRows(tableName, columnName, vals, dateFormatter, column.meta.date_format)
                       break
                     }
@@ -350,6 +302,17 @@ export default class ExcelTemplateAdapter extends TemplateGenerator {
                     }
                     if (isMultiOrSingleSelectVal(vals, this.config.maxRowsToParse, column)) {
                       this.addDataRows(tableName, columnName, vals, multiOrSingleSelectFormatter)
+                      break
+                    }
+                    if (isIsoDateVal(vals, this.config.maxRowsToParse)) {
+                      for (const [_, cell] of vals) {
+                        cell.v = this.fixImportedDate(isoToDate(cell.w) as Date)
+                      }
+                      if (isAllDate(vals, column)) {
+                        this.addDataRows(tableName, columnName, vals, dateFormatter, column.meta.date_format)
+                        break
+                      }
+                      this.addDataRows(tableName, columnName, vals, dateTimeFormatter)
                       break
                     }
                     this.addDataRows(tableName, columnName, vals, defaultFormater)
