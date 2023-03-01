@@ -31,6 +31,7 @@ import { initStrategies } from './userApi/initStrategies';
 import modelVisibilityApis from './modelVisibilityApis';
 import metaDiffApis from './metaDiffApis';
 import cacheApis from './cacheApis';
+import envApis from './envApis';
 import apiTokenApis from './apiTokenApis';
 import hookFilterApis from './hookFilterApis';
 import testApis from './testApis';
@@ -101,6 +102,7 @@ export default function (router: Router, server) {
   router.use(modelVisibilityApis);
   router.use(metaDiffApis);
   router.use(cacheApis);
+  router.use(envApis);
   router.use(apiTokenApis);
   router.use(hookFilterApis);
   router.use(swaggerApis);

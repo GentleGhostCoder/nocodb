@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { autoResetRef, useThrottleFn } from '#imports'
-const { size = process.env.ICON_WIDTH, animate = false } = defineProps<Props>()
-const icon = process.env.ICON
+import { autoResetRef, useProject, useThrottleFn } from '#imports'
+const { size = useProject().backendEnv?.ICON_WIDTH || process.env.ICON_WIDTH, animate = false } = defineProps<Props>()
+const icon = useProject().backendEnv?.ICON_URL || process.env.ICON
 interface Props {
   size?: number
   animate?: boolean

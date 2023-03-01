@@ -16,7 +16,25 @@ import {
 } from '#imports'
 import type { ProjectMetaInfo, ThemeConfig } from '~/lib'
 
+interface BackendEnv {
+  PROJECTS_TITLE: string
+  LOGO_URL: string
+  LOGO_WIDTH: string
+  ICON_URL: string
+  ICON_WIDTH: string
+  LOGO_TEXT: string
+  ICON_TEXT: string
+}
+
 export const useProject = createSharedComposable(() => {
+  let backendEnv = {} as BackendEnv
+
+  $fetch('/api/v1/db/meta/env')
+    .then((res: any) => {
+      backendEnv = res?.json()
+    })
+    .catch((_: any) => null)
+
   const { $e } = useNuxtApp()
 
   const { api, isLoading } = useApi()
@@ -195,6 +213,7 @@ export const useProject = createSharedComposable(() => {
   )
 
   return {
+    backendEnv,
     project,
     bases,
     tables,

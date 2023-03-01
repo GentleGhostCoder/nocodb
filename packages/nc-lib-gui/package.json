@@ -1,6 +1,6 @@
 {
-  "name": "nc-lib-gui",
-  "version": "0.105.3",
+  "name": "sgeist-nc-lib-gui",
+  "version": "0.105.4",
   "description": "NocoDB GUI",
   "author": {
     "name": "NocoDB",
