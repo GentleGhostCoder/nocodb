@@ -116,14 +116,14 @@ export default class ExcelTemplateAdapter extends TemplateGenerator {
   getCellRange = (ws: any) => {
     let start_range = { c: -1, r: -1 }
     let iter = 0
-    while (start_range === { c: -1, r: -1 } || iter > Object.keys(ws).length) {
+    while ((start_range.c === -1 && start_range.r === -1) || iter > Object.keys(ws).length) {
       start_range = this.xlsx.utils.decode_cell(Object.keys(ws).slice(iter, iter + 1)[0])
       iter++
     }
 
     let end_range = { c: -1, r: -1 }
     iter = 0
-    while (end_range === { c: -1, r: -1 } || iter > Object.keys(ws).length) {
+    while ((end_range.c === -1 && end_range.r === -1) || iter > Object.keys(ws).length) {
       end_range = this.xlsx.utils.decode_cell(Object.keys(ws).slice(-2 - iter, -1 - iter)[0])
       iter++
     }

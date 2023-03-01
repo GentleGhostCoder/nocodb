@@ -27,8 +27,8 @@ import {
   useTheme,
   useUIPermission,
 } from '#imports'
-
-const iconURL = useProject().backendEnv?.ICON_URL || process.env.ICON_URL
+const backendEnv = await useProject().backendEnv.value
+const iconURL = backendEnv.ICON_URL || process.env.ICON_URL
 
 definePageMeta({
   hideHeader: true,

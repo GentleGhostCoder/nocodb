@@ -1,12 +1,10 @@
 <script lang="ts" setup>
 import { computed, navigateTo, ref, useGlobal, useNuxtApp, useProject, useRoute, useSidebar } from '#imports'
 
-const project = useProject()
-project.getProjectEnv()
-
-const logoUrl = 'http://192.168.1.230:8084/CRW2.png' // project.backendEnv?.LOGO_URL
-const logoWidth = 120 // project.backendEnv?.LOGO_WIDTH
-const icon = project.backendEnv?.ICON_URL
+const backendEnv = await useProject().backendEnv.value
+const logoUrl = backendEnv.LOGO_URL || process.env.LOGO_URL
+const logoWidth = backendEnv.LOGO_WIDTH || process.env.LOGO_WIDTH
+const iconURL = backendEnv.ICON_URL || process.env.ICON_URL
 
 const { signOut, signedIn, isLoading, user, currentVersion } = useGlobal()
 
@@ -57,13 +55,8 @@ hooks.hook('page:finish', () => {
               {{ currentVersion }}
             </template>
             <div class="flex items-center gap-2">
-              <img
-                v-if="!isDashboard"
-                :width="logoWidth"
-                alt="NocoDB"
-                :src="logoUrl || '/assets/img/brand/nocodb-full-color.png'"
-              />
-              <img v-else width="25" alt="NocoDB" :src="icon || '/assets/img/brand/nocodb-full-color.png'" />
+              <img v-if="!isDashboard" :width="logoWidth" alt="NocoDB" :src="logoUrl" />
+              <img v-else width="25" alt="NocoDB" :src="iconURL" />
             </div>
           </a-tooltip>
         </div>

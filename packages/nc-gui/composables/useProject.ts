@@ -27,9 +27,7 @@ interface BackendEnv {
 }
 
 export const useProject = createSharedComposable(() => {
-  const backendEnv = {} as BackendEnv
-
-  const { $e } = useNuxtApp()
+  const { $e, $state } = useNuxtApp()
 
   const { api, isLoading } = useApi()
 
@@ -37,7 +35,9 @@ export const useProject = createSharedComposable(() => {
 
   const route = $(router.currentRoute)
 
-  const { includeM2M } = useGlobal()
+  const { includeM2M, appInfo } = useGlobal()
+
+  const baseURL = appInfo.value?.ncSiteUrl
 
   const { setTheme, theme } = useTheme()
 
@@ -86,14 +86,14 @@ export const useProject = createSharedComposable(() => {
     return temp
   })
 
-  function getProjectEnv() {
-    $fetch('/api/v1/db/meta/env')
-      .then((res: any) => {
-        Object.assign(backendEnv, res?.json() || {})
-      })
-      .catch((_: any) => null)
-    return backendEnv
-  }
+  const backendEnv = computed(
+    async () =>
+      (await $fetch('/api/v1/db/meta/env', {
+        baseURL,
+        method: 'GET',
+        headers: { 'xc-auth': $state.token.value as string },
+      })) as BackendEnv,
+  )
 
   function getBaseType(baseId?: string) {
     return bases.value.find((base) => base.id === baseId)?.type || ClientType.MYSQL
@@ -220,7 +220,6 @@ export const useProject = createSharedComposable(() => {
     project,
     bases,
     tables,
-    getProjectEnv,
     loadProjectRoles,
     loadProject,
     updateProject,

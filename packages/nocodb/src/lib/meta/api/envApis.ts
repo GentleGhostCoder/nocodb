@@ -1,5 +1,4 @@
 import catchError from '../helpers/catchError';
-import NocoCache from '../../cache/NocoCache';
 import { Router } from 'express';
 
 export async function envGet(_, res) {
@@ -17,10 +16,6 @@ export async function envGet(_, res) {
       ICON_WIDTH: process.env.ICON_WIDTH,
     })
   );
-}
-
-export async function cacheDelete(_, res) {
-  return res.json(await NocoCache.destroy());
 }
 
 const router = Router();
