@@ -28,7 +28,7 @@ import {
   useUIPermission,
 } from '#imports'
 
-const icon = useProject().backendEnv?.ICON_URL || process.env.ICON
+const iconURL = useProject().backendEnv?.ICON_URL || process.env.ICON_URL
 
 definePageMeta({
   hideHeader: true,
@@ -268,7 +268,7 @@ useEventListener(document, 'keydown', async (e: KeyboardEvent) => {
               <template #title>
                 {{ currentVersion }}
               </template>
-              <img width="25" class="-mr-1" alt="NocoDB" :src="icon" />
+              <img width="25" class="-mr-1" alt="NocoDB" :src="iconURL" />
             </a-tooltip>
           </div>
 

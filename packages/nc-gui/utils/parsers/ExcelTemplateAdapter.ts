@@ -5,8 +5,10 @@ import {
   currencyFormatter,
   dateFormatter,
   dateTimeFormatter,
-  defaultFormater,
-  defaultRawFormater,
+  decimalFormatter,
+  defaultFormatter,
+  defaultRawFormatter,
+  findMaxOccurrence,
   isAllDate,
   isCheckboxVal,
   isEmailVal,
@@ -17,6 +19,7 @@ import {
   isUrlVal,
   isoToDate,
   multiOrSingleSelectFormatter,
+  numberFormatter,
   percentFormatter,
   specialCharRegex,
 } from '#imports'
@@ -110,8 +113,26 @@ export default class ExcelTemplateAdapter extends TemplateGenerator {
     })
   }
 
+  getCellRange = (ws: any) => {
+    let start_range = { c: -1, r: -1 }
+    let iter = 0
+    while (start_range === { c: -1, r: -1 } || iter > Object.keys(ws).length) {
+      start_range = this.xlsx.utils.decode_cell(Object.keys(ws).slice(iter, iter + 1)[0])
+      iter++
+    }
+
+    let end_range = { c: -1, r: -1 }
+    iter = 0
+    while (end_range === { c: -1, r: -1 } || iter > Object.keys(ws).length) {
+      end_range = this.xlsx.utils.decode_cell(Object.keys(ws).slice(-2 - iter, -1 - iter)[0])
+      iter++
+    }
+    return { s: start_range, e: end_range }
+  }
+
   // handle date1904 property
-  fixImportedDate = (date: Date) => {
+  fixImportedDate = (date: any) => {
+    if (!(date instanceof Date)) return date
     const parsed = this.xlsx.SSF.parse_date_code((date.getTime() - this.dnthresh) / this.day_ms, {
       date1904: this.wb.Workbook.WBProps.date1904,
     })
@@ -151,9 +172,11 @@ export default class ExcelTemplateAdapter extends TemplateGenerator {
             const table = { table_name: tableName, ref_table_name: tableName, columns: [] as any[] }
             this.project.tables.push(table)
             const ws: any = this.wb.Sheets[sheet]
-            const range = this.xlsx.utils.decode_range(ws['!ref'])
 
-            const skippedValues: any[] = []
+            // sometimes the '!ref' is wrong (e.g. the max cell is much more than the actual max cell), so we need to calculate the range of the actual max cell
+            const range = this.getCellRange(ws)
+
+            const skippedCellCount: number[] = []
             if (this.config.dynamicHeaders) {
               // The dynamicHeaders property is likely used when the Excel file does not have a fixed header row, or when the location of the header row may vary.
               for (let col = 0; col < range.e.c; col++) {
@@ -161,23 +184,25 @@ export default class ExcelTemplateAdapter extends TemplateGenerator {
                 let cell
                 while (true) {
                   cell = this.getCellObj(ws, range.s.c + col, skip)
-                  if (cell || skip > this.config.maxRowsToParse) {
+                  if (Object.keys(cell).length || skip > this.config.maxRowsToParse) {
                     break
                   }
                   skip++
                 }
                 if (skip) {
-                  skippedValues.push(cell)
+                  skippedCellCount.push(skip)
                 }
               }
             }
 
+            // typescript code for maximal occurent value in array
+            const maxSkippedCellCount = findMaxOccurrence(skippedCellCount)
+
             this.data[tableName] = []
             const headerRanges: number[] = []
-            const firstEntryIsRef = Object.keys(ws)[0] === '!ref'
 
             Object.entries(ws as Record<string, any>)
-              .slice(skippedValues.length + +firstEntryIsRef, skippedValues.length + range.e.c + 1 + +firstEntryIsRef)
+              .filter(([key, _]) => this.xlsx.utils.decode_cell(key).r === maxSkippedCellCount)
               .forEach(([cellChar, headerCell]) => {
                 const cellIdx = this.xlsx.utils.decode_cell(cellChar)
                 if (headerRanges.includes(cellIdx.c)) {
@@ -188,7 +213,10 @@ export default class ExcelTemplateAdapter extends TemplateGenerator {
                   return
                 }
                 const vals = Object.entries(ws as Record<string, any>)
-                  .filter(([key, _]) => this.xlsx.utils.decode_cell(key).c === cellIdx.c)
+                  .filter(([key, _]) => {
+                    const range = this.xlsx.utils.decode_cell(key)
+                    return range.c === cellIdx.c && range.r > maxSkippedCellCount - 1
+                  })
                   .slice(+this.config.firstRowAsHeaders, -1)
 
                 const maxCellIdx = vals.reduce((a: number, [v, _]) => {
@@ -228,7 +256,7 @@ export default class ExcelTemplateAdapter extends TemplateGenerator {
                 table.columns.push(column)
 
                 if (!this.config.autoSelectFieldTypes) {
-                  this.addDataRows(tableName, columnName, vals, defaultRawFormater)
+                  this.addDataRows(tableName, columnName, vals, defaultRawFormatter)
                 }
 
                 // parse each column
@@ -238,7 +266,7 @@ export default class ExcelTemplateAdapter extends TemplateGenerator {
                   case UITypes.Number:
                     if (isDecimalVal(vals, this.config.maxRowsToParse)) {
                       column.uidt = UITypes.Decimal
-                      this.addDataRows(tableName, columnName, vals, defaultFormater)
+                      this.addDataRows(tableName, columnName, vals, decimalFormatter)
                       break
                     }
 
@@ -261,7 +289,7 @@ export default class ExcelTemplateAdapter extends TemplateGenerator {
                     }
 
                     column.uidt = UITypes.Number
-                    this.addDataRows(tableName, columnName, vals, defaultFormater)
+                    this.addDataRows(tableName, columnName, vals, numberFormatter)
 
                     break
 
@@ -282,17 +310,17 @@ export default class ExcelTemplateAdapter extends TemplateGenerator {
                   default:
                     if (isMultiLineTextVal(vals, this.config.maxRowsToParse)) {
                       column.uidt = UITypes.LongText
-                      this.addDataRows(tableName, columnName, vals, defaultFormater)
+                      this.addDataRows(tableName, columnName, vals, defaultFormatter)
                       break
                     }
                     if (isEmailVal(vals, this.config.maxRowsToParse)) {
                       column.uidt = UITypes.Email
-                      this.addDataRows(tableName, columnName, vals, defaultFormater)
+                      this.addDataRows(tableName, columnName, vals, defaultFormatter)
                       break
                     }
                     if (isUrlVal(vals, this.config.maxRowsToParse)) {
                       column.uidt = UITypes.URL
-                      this.addDataRows(tableName, columnName, vals, defaultFormater)
+                      this.addDataRows(tableName, columnName, vals, defaultFormatter)
                       break
                     }
                     if (isCheckboxVal(vals, this.config.maxRowsToParse)) {
@@ -315,7 +343,7 @@ export default class ExcelTemplateAdapter extends TemplateGenerator {
                       this.addDataRows(tableName, columnName, vals, dateTimeFormatter)
                       break
                     }
-                    this.addDataRows(tableName, columnName, vals, defaultFormater)
+                    this.addDataRows(tableName, columnName, vals, defaultFormatter)
                     break
                 }
               })

@@ -27,13 +27,7 @@ interface BackendEnv {
 }
 
 export const useProject = createSharedComposable(() => {
-  let backendEnv = {} as BackendEnv
-
-  $fetch('/api/v1/db/meta/env')
-    .then((res: any) => {
-      backendEnv = res?.json()
-    })
-    .catch((_: any) => null)
+  const backendEnv = {} as BackendEnv
 
   const { $e } = useNuxtApp()
 
@@ -91,6 +85,15 @@ export const useProject = createSharedComposable(() => {
     }
     return temp
   })
+
+  function getProjectEnv() {
+    $fetch('/api/v1/db/meta/env')
+      .then((res: any) => {
+        Object.assign(backendEnv, res?.json() || {})
+      })
+      .catch((_: any) => null)
+    return backendEnv
+  }
 
   function getBaseType(baseId?: string) {
     return bases.value.find((base) => base.id === baseId)?.type || ClientType.MYSQL
@@ -217,6 +220,7 @@ export const useProject = createSharedComposable(() => {
     project,
     bases,
     tables,
+    getProjectEnv,
     loadProjectRoles,
     loadProject,
     updateProject,

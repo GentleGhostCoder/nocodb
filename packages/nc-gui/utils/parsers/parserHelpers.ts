@@ -168,7 +168,7 @@ export const isMultiLineTextVal = (vals: any[], limitRows: number) =>
 
 export const isMultiOrSingleSelectVal = (vals: any[], limitRows: number, column: Record<string, any>) => {
   // TODO: optionally add '.map((v: any) => v[1].w.replace('\\', '_')) as []' to prevent encoding error for mysql set / enum
-  const props = extractMultiOrSingleSelectProps(vals as [])
+  const props = extractMultiOrSingleSelectProps(vals.map((cell: any) => cell[1].w) as [])
   if (!props) return false
   Object.assign(column, props)
   return true
@@ -190,22 +190,28 @@ export const isNumberVal = (vals: any[], limitRows: number) =>
 
 export const isIsoDateVal = (vals: any[], limitRows: number) => vals.slice(0, limitRows).every((v) => isoToDate(v[1].w))
 
-// TODO: maybe split defaultFormater into more specific to pass default value if needed, e.g. numberFormater (with default 0), decimalFormater (with default 0.0)
-export const defaultFormater = (cell: any) => cell.v
+export const defaultFormatter = (cell: any, defaultVal: any = null) => cell.v || defaultVal
 
-export const defaultRawFormater = (cell: any) => cell.w || null
+export const decimalFormatter = (cell: any, defaultVal = 0.0) => parseFloat(cell.w) || defaultVal
 
-export const dateFormatter = (cell: any, format: string) => dayjs(cell.v).format(format)
+export const numberFormatter = (cell: any, defaultVal = 0) => parseInt(cell.w) || defaultVal
 
-// TODO: pass Default Date if needed
-export const dateTimeFormatter = (cell: any) => cell.v
+export const defaultRawFormatter = (cell: any, defaultVal: any = null) => cell.w || defaultVal
 
-export const checkBoxFormatter = (cell: any) => getCheckboxValue(cell.v)
+export const dateFormatter = (cell: any, format: string, defaultVal: Date | null = null) =>
+  cell.v ? dayjs(cell.v).format(format) : defaultVal
 
-export const currencyFormatter = (cell: any) => cell.w?.replace(/[^\d.]+/g, '') || null
-export const percentFormatter = (cell: any) => parseFloat(cell.w?.slice(0, -1)) / 100 || null
+export const dateTimeFormatter = (cell: any, defaultVal: Date | null = null) => cell.v || defaultVal
 
-export const multiOrSingleSelectFormatter = (cell: any) => cell.w?.replace('\\', '_') || null
+export const checkBoxFormatter = (cell: any, defaultVal: boolean | null = null) => getCheckboxValue(cell.v) || defaultVal
+
+export const currencyFormatter = (cell: any, defaultVal: string | null = null) => cell.w?.replace(/[^\d.]+/g, '') || defaultVal
+
+export const percentFormatter = (cell: any, defaultVal: string | null = null) =>
+  parseFloat(cell.w?.slice(0, -1)) / 100 || defaultVal
+
+export const multiOrSingleSelectFormatter = (cell: any, defaultVal: string | null = null) =>
+  cell.w?.replace('\\', '_') || defaultVal
 
 export const isAllDate = (vals: any[], column: Record<string, any>) => {
   const dateFormats: Record<string, number> = {}
@@ -227,4 +233,29 @@ export const isAllDate = (vals: any[], column: Record<string, any>) => {
 
   column.uidt = UITypes.DateTime
   return isOnlyDate
+}
+
+export function findMaxOccurrence(arr: number[]): number {
+  const occurrenceMap = new Map<number, number>()
+
+  // Count the occurrences of each value in the array
+  arr.forEach((val) => {
+    if (occurrenceMap.has(val)) {
+      occurrenceMap.set(val, occurrenceMap.get(val)! + 1)
+    } else {
+      occurrenceMap.set(val, 1)
+    }
+  })
+
+  // Find the value with the maximum occurrence
+  let maxVal = 0
+  let maxOccurrence = 0
+  occurrenceMap.forEach((occurrence, val) => {
+    if (occurrence > maxOccurrence) {
+      maxVal = val
+      maxOccurrence = occurrence
+    }
+  })
+
+  return maxVal
 }
