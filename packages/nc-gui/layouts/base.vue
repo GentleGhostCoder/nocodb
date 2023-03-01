@@ -2,6 +2,7 @@
 import { computed, navigateTo, ref, useGlobal, useNuxtApp, useRoute, useSidebar } from '#imports'
 
 const logo = process.env.LOGO
+const logo_width = process.env.LOGO_WIDTH
 const icon = process.env.ICON
 
 const { signOut, signedIn, isLoading, user, currentVersion } = useGlobal()
@@ -53,7 +54,7 @@ hooks.hook('page:finish', () => {
               {{ currentVersion }}
             </template>
             <div class="flex items-center gap-2">
-              <img v-if="!isDashboard" width="120" alt="NocoDB" :src="logo" />
+              <img v-if="!isDashboard" :width="logo_width" alt="NocoDB" :src="logo" />
               <img v-else width="25" alt="NocoDB" :src="icon" />
             </div>
           </a-tooltip>

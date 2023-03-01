@@ -160,7 +160,7 @@ export default defineNuxtConfig({
       // Change Logo for NOCODB if nessesary
       'process.env.PROJECTS_TITLE': `'${process.env.PROJECTS_TITLE}'`,
       'process.env.LOGO': `'${process.env.LOGO || '/assets/img/brand/nocodb-full-color.png'}'`,
-      'process.env.LOGO_WIDTH': `'${process.env.LOGO_WIDTH || 'auto'}'`,
+      'process.env.LOGO_WIDTH': `${process.env.LOGO_WIDTH || 120}`,
       'process.env.ICON': `'${process.env.ICON || '/assets/img/brand/nocodb-full-color.png'}'`,
       'process.env.ICON_WIDTH': `${process.env.ICON_WIDTH || 90}`,
     },
