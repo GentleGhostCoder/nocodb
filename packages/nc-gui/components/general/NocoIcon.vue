@@ -19,14 +19,13 @@ const onClick = useThrottleFn(() => {
 
 <template>
   <div
-    :style="{ left: `calc(50% - ${size / 2}px)`, top: `-${size / 2}px` }"
+    :style="{ left: `calc(50% - ${iconWidth / 2}px)`, top: `-${iconWidth / 2}px` }"
     class="color-transition absolute rounded-lg pt-1 pl-1 -ml-1"
     @click="onClick"
   >
     <div class="relative">
-      <!--      <img class="hidden dark:block" :width="size" :height="size" alt="NocoDB" src="~/assets/img/icons/512x512-trans.png" /> -->
-      <img class="dark:hidden" :width="iconWidth" alt="NocoDB" :src="iconURL" />
-
+      <img class="hidden dark:block center" :width="iconWidth" style="filter: grayscale(100%)" alt="NocoDB" :src="iconURL" />
+      <img class="dark:hidden center" :width="iconWidth" alt="NocoDB" :src="iconURL" />
       <TransitionGroup name="layout" :duration="500">
         <template v-if="animate || ping">
           <div

@@ -290,7 +290,7 @@ watch(
               </div>
 
               <div class="flex flex-row justify-center">
-                <a-button type="primary" html-type="submit">
+                <a-button type="primary" class="!rounded-md mr-1" html-type="submit">
                   <div v-if="selectedUser">{{ $t('general.save') }}</div>
 
                   <div v-else class="flex flex-row justify-center items-center space-x-1.5">

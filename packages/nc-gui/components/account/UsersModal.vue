@@ -243,7 +243,7 @@ const emailInput = ref((el) => {
               </div>
 
               <div class="flex flex-row justify-center">
-                <a-button type="primary" html-type="submit">
+                <a-button type="primary" class="!rounded-md mr-1" html-type="submit">
                   <div class="flex flex-row justify-center items-center space-x-1.5">
                     <MaterialSymbolsSendOutline class="flex h-[0.8rem]" />
                     <div>{{ $t('activity.invite') }}</div>
