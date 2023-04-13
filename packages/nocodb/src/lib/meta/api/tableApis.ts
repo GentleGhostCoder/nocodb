@@ -139,15 +139,12 @@ export async function tableCreate(req: Request<any, any, TableReqType>, res) {
     );
   }
 
-  if (
-    !(await Model.checkAliasAvailable({
-      title: req.body.title,
-      project_id: project.id,
-      base_id: base.id,
-    }))
-  ) {
-    NcError.badRequest('Duplicate table alias');
-  }
+  await Model.checkAliasAvailable({
+    title: req.body.title,
+    table_name: req.body.table_name,
+    project_id: project.id,
+    base_id: base.id,
+  });
 
   const sqlMgr = await ProjectMgrv2.getSqlMgr(project);
 
@@ -282,7 +279,7 @@ export async function tableUpdate(req: Request<any, any>, res) {
     );
   }
 
-  const schould_rename = await Model.checkTitleAvailable({
+  const shouldRename = await Model.checkTitleAvailable({
     table_name: req.body.table_name,
     project_id: project.id,
     base_id: base.id,
@@ -296,14 +293,18 @@ export async function tableUpdate(req: Request<any, any>, res) {
     );
   }
 
+  await Model.checkAliasAvailable({
+    title: req.body.title,
+    table_name: req.body.table_name,
+    project_id: project.id,
+    base_id: base.id,
+  });
+
   if (
-    !(await Model.checkAliasAvailable({
-      title: req.body.title,
-      project_id: project.id,
-      base_id: base.id,
-    }))
+    !shouldRename &&
+    model.table_name.toLowerCase() !== req.body.table_name.toLowerCase()
   ) {
-    NcError.badRequest('Duplicate table alias');
+    NcError.badRequest(`Table name ${req.body.title} already exists!`);
   }
 
   const sqlMgr = await ProjectMgrv2.getSqlMgr(project);
@@ -329,7 +330,7 @@ export async function tableUpdate(req: Request<any, any>, res) {
     req.body.table_name
   );
 
-  if (schould_rename) {
+  if (shouldRename) {
     await sqlMgr.sqlOpPlus(base, 'tableRename', {
       ...req.body,
       tn: req.body.table_name,

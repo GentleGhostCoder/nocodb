@@ -5,9 +5,9 @@ import NocoCache from '../cache/NocoCache';
 import { XKnex } from '../db/sql-data-mapper';
 import { BaseModelSqlv2 } from '../db/sql-data-mapper/lib/sql/BaseModelSqlv2';
 import {
+  BoolType,
   isVirtualCol,
   ModelTypes,
-  BoolType,
   TableReqType,
   TableType,
   UITypes,
@@ -746,7 +746,7 @@ export default class Model implements TableType {
     }: { table_name; project_id; base_id; exclude_id? },
     ncMeta = Noco.ncMeta
   ) {
-    return !(await ncMeta.metaGet2(
+    const meta = await ncMeta.metaGet2(
       project_id,
       base_id,
       MetaTable.MODELS,
@@ -755,32 +755,49 @@ export default class Model implements TableType {
       },
       null,
       exclude_id && { id: { neq: exclude_id } }
-    ));
+    );
+
+    if (!meta) return true;
+    if (meta?.table_name || undefined == table_name) {
+      if (meta?.project_id == project_id) {
+        return false;
+      }
+      NcError.badRequest('Duplicate table name');
+    }
+    return true;
   }
 
   static async checkAliasAvailable(
     {
       title,
+      table_name,
       project_id,
       base_id,
       exclude_id,
-    }: { title; project_id; base_id; exclude_id? },
+    }: { title; table_name; project_id; base_id; exclude_id? },
     ncMeta = Noco.ncMeta
   ) {
-    return (
-      (
-        await ncMeta.metaGet2(
-          project_id,
-          base_id,
-          MetaTable.MODELS,
-          {
-            title,
-          },
-          null,
-          exclude_id && { id: { neq: exclude_id } }
-        )
-      )?.title || undefined != title
+    const meta = await ncMeta.metaGet2(
+      project_id,
+      base_id,
+      MetaTable.MODELS,
+      {
+        title,
+      },
+      null,
+      exclude_id && { id: { neq: exclude_id } }
     );
+    if (!meta) return;
+    if (
+      !(
+        (meta?.title || undefined == title) &&
+        meta &&
+        meta.table_name.toLowerCase() == table_name.toLowerCase()
+      )
+    ) {
+      NcError.badRequest('Duplicate table alias');
+    }
+    return;
   }
 
   async getAliasColObjMap() {
