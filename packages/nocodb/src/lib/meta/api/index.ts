@@ -25,6 +25,7 @@ import pluginController from '../../controllers/plugin.ctl';
 import gridViewColumnController from '../../controllers/views/gridViewColumn.ctl';
 import kanbanViewController from '../../controllers/views/kanbanView.ctl';
 import { userController } from '../../controllers/user';
+import envController from '../../controllers/env.ctl';
 import utilController from '../../controllers/util.ctl';
 import projectUserController from '../../controllers/projectUser.ctl';
 import sharedBaseController from '../../controllers/sharedBase.ctl';
@@ -65,6 +66,7 @@ export default function (router: Router, server) {
   if (process.env['PLAYWRIGHT_TEST'] === 'true') {
     router.use(testController);
   }
+  router.use(envController);
   router.use(columnController);
   router.use(exportController);
   router.use(dataController);

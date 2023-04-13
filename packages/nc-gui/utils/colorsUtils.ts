@@ -35,11 +35,11 @@ export const enumColor = {
 export const themeColors = {
   'background': '#FFFFFF',
   'surface': '#FFFFFF',
-  'primary': '#F82B60',
-  'secondary': '#da0303',
-  'secondary-darken-1': '#870101',
+  'primary': '#4351e8',
+  'secondary': '#03DAC6',
+  'secondary-darken-1': '#018786',
   'error': '#B00020',
-  'info': '#f32121',
+  'info': '#2196F3',
   'success': '#4CAF50',
   'warning': '#FB8C00',
 }
@@ -61,7 +61,7 @@ export const themeV2Colors = {
   },
 
   'royal-red': {
-    'DEFAULT': '#F82B60',
+    'DEFAULT': '#A61421',
     '50': '#FEE7E9',
     '100': '#FCD4D8',
     '200': '#F9B0B6',

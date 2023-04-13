@@ -1,5 +1,5 @@
-import catchError from '../helpers/catchError';
 import { Router } from 'express';
+import catchError from '../meta/helpers/catchError';
 
 export async function envGet(_, res) {
   res.set({

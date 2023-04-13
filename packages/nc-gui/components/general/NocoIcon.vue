@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { autoResetRef, useProject, useThrottleFn } from '#imports'
 const { size = 90, animate = false } = defineProps<Props>()
-const backendEnv = await useProject().backendEnv.value
+const backendEnv = await useProject().backendEnv
+console.log(backendEnv)
 const iconURL = backendEnv.ICON_URL || process.env.ICON_URL
 const iconWidth = backendEnv.ICON_WIDTH || process.env.ICON_WIDTH
 

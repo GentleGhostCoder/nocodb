@@ -1,5 +1,9 @@
 <script lang="ts" setup>
-import { computed, navigateTo, ref, useGlobal, useNuxtApp, useRoute, useSidebar } from '#imports'
+import { computed, iconMap, navigateTo, ref, useGlobal, useNuxtApp, useProject, useRoute, useSidebar } from '#imports'
+const backendEnv = await useProject().backendEnv
+const logoUrl = backendEnv.LOGO_URL || process.env.LOGO_URL
+const logoWidth = backendEnv.LOGO_WIDTH || process.env.LOGO_WIDTH
+const iconURL = backendEnv.ICON_URL || process.env.ICON_URL
 
 const { signOut, signedIn, isLoading, user, currentVersion } = useGlobal()
 
@@ -50,8 +54,8 @@ hooks.hook('page:finish', () => {
               {{ currentVersion }}
             </template>
             <div class="flex items-center gap-2">
-              <img v-if="!isDashboard" width="120" alt="NocoDB" src="~/assets/img/brand/nocodb-full-color.png" />
-              <img v-else width="25" alt="NocoDB" src="~/assets/img/icons/512x512.png" />
+              <img v-if="!isDashboard" :width="logoWidth" alt="NocoDB" :src="logoUrl" />
+              <img v-else width="25" alt="NocoDB" :src="iconURL" />
             </div>
           </a-tooltip>
         </div>
@@ -66,12 +70,12 @@ hooks.hook('page:finish', () => {
 
         <div class="flex-1" />
 
-        <LazyGeneralReleaseInfo />
+        <!--        <LazyGeneralReleaseInfo /> -->
 
         <a-tooltip placement="bottom" :mouse-enter-delay="1">
           <template #title> Switch language</template>
 
-          <div class="flex pr-4 items-center text-white">
+          <div class="flex pr-4 items-center">
             <LazyGeneralLanguage class="cursor-pointer text-2xl hover:text-accent" />
           </div>
         </a-tooltip>

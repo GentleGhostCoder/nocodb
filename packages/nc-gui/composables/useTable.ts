@@ -1,4 +1,4 @@
-import type { LinkToAnotherRecordType, TableType } from 'nocodb-sdk'
+import type { ColumnType, LinkToAnotherRecordType, TableType } from 'nocodb-sdk'
 import { UITypes, isSystemColumn } from 'nocodb-sdk'
 import {
   Modal,
@@ -7,6 +7,7 @@ import {
   generateUniqueTitle as generateTitle,
   message,
   reactive,
+  storeToRefs,
   useI18n,
   useMetas,
   useNuxtApp,

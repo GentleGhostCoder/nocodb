@@ -3,7 +3,7 @@ import type { TableType } from 'nocodb-sdk'
 import type { Input } from 'ant-design-vue'
 import { Dropdown, Tooltip, message } from 'ant-design-vue'
 import Sortable from 'sortablejs'
-import GithubButton from 'vue-github-button'
+// import GithubButton from 'vue-github-button'
 import { Icon } from '@iconify/vue'
 import type { VNodeRef } from '#imports'
 import {
@@ -1110,21 +1110,21 @@ const setIcon = async (icon: string, table: TableType) => {
 
       <LazyGeneralHelpAndSupport class="color-transition px-2 text-gray-500 cursor-pointer select-none hover:text-accent" />
 
-      <!--      <GeneralJoinCloud-->
-      <!--        v-if="!isMobileMode"-->
-      <!--        class="color-transition px-2 text-gray-500 cursor-pointer select-none hover:text-accent"-->
-      <!--      />-->
+      <!--      <GeneralJoinCloud -->
+      <!--        v-if="!isMobileMode" -->
+      <!--        class="color-transition px-2 text-gray-500 cursor-pointer select-none hover:text-accent" -->
+      <!--      /> -->
 
-      <!--      <GithubButton-->
-      <!--        v-if="!isMobileMode"-->
-      <!--        class="ml-2 py-1"-->
-      <!--        href="https://github.com/nocodb/nocodb"-->
-      <!--        data-icon="octicon-star"-->
-      <!--        data-show-count="true"-->
-      <!--        data-size="large"-->
-      <!--      >-->
-      <!--        Star-->
-      <!--      </GithubButton>-->
+      <!--      <GithubButton -->
+      <!--        v-if="!isMobileMode" -->
+      <!--        class="ml-2 py-1" -->
+      <!--        href="https://github.com/nocodb/nocodb" -->
+      <!--        data-icon="octicon-star" -->
+      <!--        data-show-count="true" -->
+      <!--        data-size="large" -->
+      <!--      > -->
+      <!--        Star -->
+      <!--      </GithubButton> -->
     </div>
   </div>
 </template>

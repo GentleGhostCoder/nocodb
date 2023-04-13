@@ -334,7 +334,7 @@ export function useViewData(
     try {
       const id = extractPkFromRow(toUpdate.row, metaValue?.columns as ColumnType[])
 
-      const updatedRowData = await $api.dbViewRow.update(
+      const updatedRowData: any = await $api.dbViewRow.update(
         NOCO,
         project?.value.id as string,
         metaValue?.id as string,

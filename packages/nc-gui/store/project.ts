@@ -16,8 +16,18 @@ import {
 } from '#imports'
 import type { ProjectMetaInfo, ThemeConfig } from '~/lib'
 
+interface BackendEnv {
+  PROJECTS_TITLE: string
+  LOGO_URL: string
+  LOGO_WIDTH: string
+  ICON_URL: string
+  ICON_WIDTH: string
+  LOGO_TEXT: string
+  ICON_TEXT: string
+}
+
 export const useProject = defineStore('projectStore', () => {
-  const { $e } = useNuxtApp()
+  const { $e, $state } = useNuxtApp()
 
   const { api, isLoading } = useApi()
 
@@ -25,7 +35,9 @@ export const useProject = defineStore('projectStore', () => {
 
   const route = $(router.currentRoute)
 
-  const { includeM2M } = useGlobal()
+  const { includeM2M, appInfo } = useGlobal()
+
+  const baseURL = appInfo.value?.ncSiteUrl
 
   const { setTheme, theme } = useTheme()
 
@@ -73,6 +85,15 @@ export const useProject = defineStore('projectStore', () => {
     }
     return temp
   })
+
+  const backendEnv = computed(
+    async () =>
+      (await $fetch('/api/v1/db/meta/env', {
+        baseURL,
+        method: 'GET',
+        headers: { 'xc-auth': $state.token.value as string },
+      })) as BackendEnv,
+  )
 
   function getBaseType(baseId?: string) {
     return bases.value.find((base) => base.id === baseId)?.type || ClientType.MYSQL
@@ -199,6 +220,7 @@ export const useProject = defineStore('projectStore', () => {
   )
 
   return {
+    backendEnv,
     project,
     bases,
     tables,
@@ -221,5 +243,6 @@ export const useProject = defineStore('projectStore', () => {
     lastOpenedViewMap,
     isXcdbBase,
     hasEmptyOrNullFilters,
+    setProject,
   }
 })

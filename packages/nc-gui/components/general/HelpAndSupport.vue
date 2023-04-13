@@ -39,24 +39,24 @@ const showDrawer = ref(false)
       <a-typography-title :level="4" class="!mb-6 !text-gray-500">{{ $t('title.helpCenter') }}</a-typography-title>
 
       <LazyGeneralSocialCard class="!w-full nc-social-card">
-        <!--        <template #before>-->
-        <!--          <a-list-item v-if="project">-->
-        <!--            <nuxt-link-->
-        <!--              v-e="['a:navbar:user:swagger']"-->
-        <!--              no-prefetch-->
-        <!--              no-rel-->
-        <!--              class="!no-underline !text-current py-4 font-semibold"-->
-        <!--              target="_blank"-->
-        <!--              @click="openSwaggerLink"-->
-        <!--            >-->
-        <!--              <div class="ml-3 flex items-center text-sm">-->
-        <!--                <LogosSwagger />-->
-        <!--                &lt;!&ndash;            Swagger Documentation &ndash;&gt;-->
-        <!--                <span class="ml-3">{{ project.title }} : {{ $t('title.swaggerDocumentation') }}</span>-->
-        <!--              </div>-->
-        <!--            </nuxt-link>-->
-        <!--          </a-list-item>-->
-        <!--        </template>-->
+        <!--        <template #before> -->
+        <!--          <a-list-item v-if="project"> -->
+        <!--            <nuxt-link -->
+        <!--              v-e="['a:navbar:user:swagger']" -->
+        <!--              no-prefetch -->
+        <!--              no-rel -->
+        <!--              class="!no-underline !text-current py-4 font-semibold" -->
+        <!--              target="_blank" -->
+        <!--              @click="openSwaggerLink" -->
+        <!--            > -->
+        <!--              <div class="ml-3 flex items-center text-sm"> -->
+        <!--                <LogosSwagger /> -->
+        <!--                &lt;!&ndash;            Swagger Documentation &ndash;&gt; -->
+        <!--                <span class="ml-3">{{ project.title }} : {{ $t('title.swaggerDocumentation') }}</span> -->
+        <!--              </div> -->
+        <!--            </nuxt-link> -->
+        <!--          </a-list-item> -->
+        <!--        </template> -->
       </LazyGeneralSocialCard>
 
       <div class="min-h-10 w-full" />

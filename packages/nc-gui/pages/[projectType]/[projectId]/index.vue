@@ -31,7 +31,7 @@ import {
   useTheme,
   useUIPermission,
 } from '#imports'
-const backendEnv = await useProject().backendEnv.value
+const backendEnv = await useProject().backendEnv
 const iconURL = backendEnv.ICON_URL || process.env.ICON_URL
 
 definePageMeta({
@@ -348,44 +348,44 @@ useEventListener(document, 'keydown', async (e: KeyboardEvent) => {
                   </template>
                   <template v-if="!isSharedBase">
                     <!-- Copy Project Info -->
-<!--                    <a-menu-item key="copy">-->
-<!--                      <div-->
-<!--                        v-e="['c:navbar:user:copy-proj-info']"-->
-<!--                        class="nc-project-menu-item group"-->
-<!--                        @click.stop="copyProjectInfo"-->
-<!--                      >-->
-<!--                        <component :is="iconMap.copy" class="group-hover:text-accent" />-->
-<!--                        {{ $t('activity.account.projInfo') }}-->
-<!--                      </div>-->
-<!--                    </a-menu-item>-->
+                    <!--                    <a-menu-item key="copy"> -->
+                    <!--                      <div -->
+                    <!--                        v-e="['c:navbar:user:copy-proj-info']" -->
+                    <!--                        class="nc-project-menu-item group" -->
+                    <!--                        @click.stop="copyProjectInfo" -->
+                    <!--                      > -->
+                    <!--                        <component :is="iconMap.copy" class="group-hover:text-accent" /> -->
+                    <!--                        {{ $t('activity.account.projInfo') }} -->
+                    <!--                      </div> -->
+                    <!--                    </a-menu-item> -->
 
-<!--                    <a-menu-divider />-->
+                    <!--                    <a-menu-divider /> -->
 
-<!--                    &lt;!&ndash; Swagger: Rest APIs &ndash;&gt;-->
-<!--                    <a-menu-item key="api">-->
-<!--                      <div-->
-<!--                        v-if="isUIAllowed('apiDocs') && !isMobileMode"-->
-<!--                        v-e="['e:api-docs']"-->
-<!--                        class="nc-project-menu-item group"-->
-<!--                        @click.stop="openLink(`/api/v1/db/meta/projects/${route.params.projectId}/swagger`, appInfo.ncSiteUrl)"-->
-<!--                      >-->
-<!--                        <component :is="iconMap.json" class="group-hover:text-accent" />-->
-<!--                        {{ $t('activity.account.swagger') }}-->
-<!--                      </div>-->
-<!--                    </a-menu-item>-->
+                    <!--                    &lt;!&ndash; Swagger: Rest APIs &ndash;&gt; -->
+                    <!--                    <a-menu-item key="api"> -->
+                    <!--                      <div -->
+                    <!--                        v-if="isUIAllowed('apiDocs') && !isMobileMode" -->
+                    <!--                        v-e="['e:api-docs']" -->
+                    <!--                        class="nc-project-menu-item group" -->
+                    <!--                        @click.stop="openLink(`/api/v1/db/meta/projects/${route.params.projectId}/swagger`, appInfo.ncSiteUrl)" -->
+                    <!--                      > -->
+                    <!--                        <component :is="iconMap.json" class="group-hover:text-accent" /> -->
+                    <!--                        {{ $t('activity.account.swagger') }} -->
+                    <!--                      </div> -->
+                    <!--                    </a-menu-item> -->
 
-<!--                    &lt;!&ndash; Copy Auth Token &ndash;&gt;-->
-<!--                    <a-menu-item key="copy">-->
-<!--                      <div-->
-<!--                        v-if="!isMobileMode"-->
-<!--                        v-e="['a:navbar:user:copy-auth-token']"-->
-<!--                        class="nc-project-menu-item group"-->
-<!--                        @click.stop="copyAuthToken"-->
-<!--                      >-->
-<!--                        <component :is="iconMap.copy" class="group-hover:text-accent" />-->
-<!--                        {{ $t('activity.account.authToken') }}-->
-<!--                      </div>-->
-<!--                    </a-menu-item>-->
+                    <!--                    &lt;!&ndash; Copy Auth Token &ndash;&gt; -->
+                    <!--                    <a-menu-item key="copy"> -->
+                    <!--                      <div -->
+                    <!--                        v-if="!isMobileMode" -->
+                    <!--                        v-e="['a:navbar:user:copy-auth-token']" -->
+                    <!--                        class="nc-project-menu-item group" -->
+                    <!--                        @click.stop="copyAuthToken" -->
+                    <!--                      > -->
+                    <!--                        <component :is="iconMap.copy" class="group-hover:text-accent" /> -->
+                    <!--                        {{ $t('activity.account.authToken') }} -->
+                    <!--                      </div> -->
+                    <!--                    </a-menu-item> -->
 
                     <a-menu-divider />
 
