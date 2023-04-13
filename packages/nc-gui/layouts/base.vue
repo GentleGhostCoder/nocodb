@@ -1,10 +1,5 @@
 <script lang="ts" setup>
-import { computed, navigateTo, ref, useGlobal, useNuxtApp, useProject, useRoute, useSidebar } from '#imports'
-
-const backendEnv = await useProject().backendEnv.value
-const logoUrl = backendEnv.LOGO_URL || process.env.LOGO_URL
-const logoWidth = backendEnv.LOGO_WIDTH || process.env.LOGO_WIDTH
-const iconURL = backendEnv.ICON_URL || process.env.ICON_URL
+import { computed, navigateTo, ref, useGlobal, useNuxtApp, useRoute, useSidebar } from '#imports'
 
 const { signOut, signedIn, isLoading, user, currentVersion } = useGlobal()
 
@@ -55,8 +50,8 @@ hooks.hook('page:finish', () => {
               {{ currentVersion }}
             </template>
             <div class="flex items-center gap-2">
-              <img v-if="!isDashboard" :width="logoWidth" alt="NocoDB" :src="logoUrl" />
-              <img v-else width="25" alt="NocoDB" :src="iconURL" />
+              <img v-if="!isDashboard" width="120" alt="NocoDB" src="~/assets/img/brand/nocodb-full-color.png" />
+              <img v-else width="25" alt="NocoDB" src="~/assets/img/icons/512x512.png" />
             </div>
           </a-tooltip>
         </div>
@@ -65,25 +60,26 @@ hooks.hook('page:finish', () => {
           <div v-show="isLoading" class="flex items-center gap-2 ml-3" data-testid="nc-loading">
             {{ $t('general.loading') }}
 
-            <MdiReload :class="{ 'animate-infinite animate-spin': isLoading }" />
+            <component :is="iconMap.reload" :class="{ 'animate-infinite animate-spin': isLoading }" />
           </div>
         </div>
 
         <div class="flex-1" />
 
-        <!--        <LazyGeneralReleaseInfo /> -->
+        <LazyGeneralReleaseInfo />
 
         <a-tooltip placement="bottom" :mouse-enter-delay="1">
-          <template #title>Switch language</template>
+          <template #title> Switch language</template>
 
-          <div class="flex pr-4 items-center">
+          <div class="flex pr-4 items-center text-white">
             <LazyGeneralLanguage class="cursor-pointer text-2xl hover:text-accent" />
           </div>
         </a-tooltip>
 
         <template v-if="signedIn">
           <a-dropdown :trigger="['click']" overlay-class-name="nc-dropdown-user-accounts-menu">
-            <MdiDotsVertical
+            <component
+              :is="iconMap.threeDotVertical"
               data-testid="nc-menu-accounts"
               class="md:text-xl cursor-pointer hover:text-accent nc-menu-accounts"
               @click.prevent
@@ -93,7 +89,7 @@ hooks.hook('page:finish', () => {
               <a-menu class="!py-0 leading-8 !rounded">
                 <a-menu-item key="0" data-testid="nc-menu-accounts__user-settings" class="!rounded-t">
                   <nuxt-link v-e="['c:navbar:user:email']" class="nc-project-menu-item group !no-underline" to="/account/users">
-                    <MdiAccountCircleOutline class="mt-1 group-hover:text-accent" />&nbsp;
+                    <component :is="iconMap.accountCircle" class="mt-1 group-hover:text-accent" />&nbsp;
                     <div class="prose group-hover:text-primary">
                       <div>Account</div>
                       <div class="text-xs text-gray-500">{{ email }}</div>
@@ -119,7 +115,7 @@ hooks.hook('page:finish', () => {
 
                 <a-menu-item key="1" class="!rounded-b group">
                   <div v-e="['a:navbar:user:sign-out']" class="nc-project-menu-item group" @click="logout">
-                    <MdiLogout class="group-hover:text-accent" />&nbsp;
+                    <component :is="iconMap.signout" class="group-hover:text-accent" />&nbsp;
 
                     <span class="prose group-hover:text-primary">
                       {{ $t('general.signOut') }}

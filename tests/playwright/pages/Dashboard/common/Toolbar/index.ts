@@ -16,6 +16,7 @@ import { ToolbarAddEditStackPage } from './AddEditKanbanStack';
 import { ToolbarSearchDataPage } from './SearchData';
 import { RowHeight } from './RowHeight';
 import { MapPage } from '../../Map';
+import { getTextExcludeIconText } from '../../../../tests/utils/general';
 
 export class ToolbarPage extends BasePage {
   readonly parent: GridPage | GalleryPage | FormPage | KanbanPage | MapPage;
@@ -67,6 +68,10 @@ export class ToolbarPage extends BasePage {
     if (menuOpen) await this.fields.get().waitFor({ state: 'hidden' });
   }
 
+  async clickFindRowByScanButton() {
+    await this.get().locator(`button.nc-btn-find-row-by-scan`).click();
+  }
+
   async clickSort() {
     const menuOpen = await this.sort.get().isVisible();
 
@@ -74,6 +79,30 @@ export class ToolbarPage extends BasePage {
 
     // Wait for the menu to close
     if (menuOpen) await this.sort.get().waitFor({ state: 'hidden' });
+  }
+
+  async verifyFieldsButtonIsVisibleWithTextAndIcon() {
+    await expect(this.get().locator(`button.nc-fields-menu-btn`)).toBeVisible();
+
+    // menu text
+    const fieldLocator = await this.get().locator(`button.nc-fields-menu-btn`);
+    const fieldText = await getTextExcludeIconText(fieldLocator);
+    await expect(fieldText).toBe('Fields');
+
+    // icons count within fields menu button
+    expect(await this.get().locator(`button.nc-fields-menu-btn`).locator(`.material-symbols-outlined`).count()).toBe(2);
+  }
+
+  async verifyFieldsButtonIsVisibleWithoutTextButIcon() {
+    await expect(this.get().locator(`button.nc-fields-menu-btn`)).toBeVisible();
+
+    // menu text
+    const fieldLocator = await this.get().locator(`button.nc-fields-menu-btn`);
+    const fieldText = await getTextExcludeIconText(fieldLocator);
+    await expect(fieldText).not.toBe('Fields');
+
+    // icons count within fields menu button
+    expect(await this.get().locator(`button.nc-fields-menu-btn`).locator(`.material-symbols-outlined`).count()).toBe(2);
   }
 
   async clickFilter({

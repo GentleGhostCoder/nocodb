@@ -12,12 +12,14 @@ import {
   computed,
   extractSdkResponseErrorMsg,
   fieldRequiredValidator,
+  iconMap,
   importCsvUrlValidator,
   importExcelUrlValidator,
   importUrlValidator,
   message,
   reactive,
   ref,
+  storeToRefs,
   useI18n,
   useProject,
   useVModel,
@@ -37,7 +39,7 @@ const emit = defineEmits(['update:modelValue'])
 
 const { t } = useI18n()
 
-const { tables } = useProject()
+const { tables } = storeToRefs(useProject())
 
 const activeKey = ref('uploadTab')
 
@@ -378,7 +380,7 @@ const beforeUpload = (file: UploadFile) => {
               <template #tab>
                 <!--              Upload -->
                 <div class="flex items-center gap-2">
-                  <MdiFileUploadOutline />
+                  <component :is="iconMap.fileUpload" />
                   {{ $t('general.upload') }}
                 </div>
               </template>
@@ -397,7 +399,7 @@ const beforeUpload = (file: UploadFile) => {
                   @change="handleChange"
                   @reject="rejectDrop"
                 >
-                  <MdiFilePlusOutline size="large" />
+                  <component :is="iconMap.plusCircle" size="large" />
 
                   <!-- Click or drag file to this area to upload -->
                   <p class="ant-upload-text">{{ $t('msg.info.import.clickOrDrag') }}</p>
@@ -412,7 +414,7 @@ const beforeUpload = (file: UploadFile) => {
             <a-tab-pane v-if="isImportTypeJson" key="jsonEditorTab" :closable="false">
               <template #tab>
                 <span class="flex items-center gap-2">
-                  <MdiCodeJson />
+                  <component :is="iconMap.json" />
                   JSON Editor
                 </span>
               </template>
@@ -425,7 +427,7 @@ const beforeUpload = (file: UploadFile) => {
             <a-tab-pane v-else key="urlTab" :closable="false">
               <template #tab>
                 <span class="flex items-center gap-2">
-                  <MdiLinkVariant />
+                  <component :is="iconMap.link" />
                   URL
                 </span>
               </template>

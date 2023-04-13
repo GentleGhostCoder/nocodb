@@ -37,9 +37,9 @@ export class ViewSidebarPage extends BasePage {
     }
   }
 
-  async activateGeoDataEasterEgg() {
+  async changeBetaFeatureToggleValue() {
     await this.dashboard.rootPage.evaluate(_ => {
-      window.localStorage.setItem('geodataToggleState', 'true');
+      window.localStorage.setItem('betaFeatureToggleState', 'true');
     });
     await this.rootPage.goto(this.rootPage.url());
   }
@@ -86,6 +86,13 @@ export class ViewSidebarPage extends BasePage {
 
   // Todo: Make selection better
   async verifyView({ title, index }: { title: string; index: number }) {
+    // flicker while page loading
+    await this.get()
+      .locator('[data-testid="view-item"]')
+      .nth(index)
+      .locator('[data-testid="truncate-label"]')
+      .waitFor({ state: 'visible' });
+
     await expect(
       this.get().locator('[data-testid="view-item"]').nth(index).locator('[data-testid="truncate-label"]')
     ).toHaveText(title, { ignoreCase: true });

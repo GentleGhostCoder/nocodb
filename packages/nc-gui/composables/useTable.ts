@@ -32,20 +32,21 @@ export function useTable(onTableCreate?: (tableMeta: TableType) => void, baseId?
   const { loadTables } = useProject()
 
   const { closeTab } = useTabs()
-  const { sqlUis, project, tables } = useProject()
+  const projectStore = useProject()
+  const { sqlUis, project, tables } = storeToRefs(projectStore)
 
   const sqlUi = computed(() => (baseId && sqlUis.value[baseId] ? sqlUis.value[baseId] : Object.values(sqlUis.value)[0]))
 
   const createTable = async () => {
     if (!sqlUi?.value) return
-    const columns = sqlUi?.value?.getNewTableColumns().filter((col: any) => {
+    const columns = sqlUi?.value?.getNewTableColumns().filter((col: ColumnType) => {
       if (col.column_name === 'id' && table.columns.includes('id_ag')) {
         Object.assign(col, sqlUi?.value?.getDataTypeForUiType({ uidt: UITypes.ID }, 'AG'))
         col.dtxp = sqlUi?.value?.getDefaultLengthForDatatype(col.dt)
         col.dtxs = sqlUi?.value?.getDefaultScaleForDatatype(col.dt)
         return true
       }
-      return table.columns.includes(col.column_name)
+      return table.columns.includes(col.column_name!)
     })
 
     try {
