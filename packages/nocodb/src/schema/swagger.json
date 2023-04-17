@@ -18956,7 +18956,7 @@
         "examples": ["string"],
         "oneOf": [
           {
-            "maxLength": 255,
+            "maxLength": 10000,
             "type": "string"
           },
           {

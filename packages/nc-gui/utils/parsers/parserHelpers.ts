@@ -211,7 +211,7 @@ export const percentFormatter = (cell: any, defaultVal: string | null = null) =>
   parseFloat(cell.w?.slice(0, -1)) / 100 || defaultVal
 
 export const multiOrSingleSelectFormatter = (cell: any, defaultVal: string | null = null) =>
-  cell.w?.replace('\\', '_') || defaultVal
+  cell.w?.replace('\\', '_').trim() || defaultVal
 
 export const isAllDate = (vals: any[], column: Record<string, any>) => {
   const dateFormats: Record<string, number> = {}

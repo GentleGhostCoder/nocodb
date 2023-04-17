@@ -52,7 +52,7 @@ export async function projectCreate(param: {
               },
             },
           },
-          inflection_column: 'camelize',
+          // inflection_column: 'camelize',
           inflection_table: 'camelize',
         },
       ];
@@ -63,7 +63,7 @@ export async function projectCreate(param: {
           type: db?.client,
           config: null,
           is_meta: true,
-          inflection_column: 'camelize',
+          // inflection_column: 'camelize',
           inflection_table: 'camelize',
         },
       ];
