@@ -1,4 +1,3 @@
-{{- if .Values.extraEnvs }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -9,5 +8,4 @@ data:
 {{- range $key, $value := .Values.extraEnvs }}
   {{ $key }}: |-
     {{- $value | nindent 4 }}
-{{- end }}
 {{- end }}
