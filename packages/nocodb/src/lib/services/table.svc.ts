@@ -458,6 +458,7 @@ export async function tableCreate(param: {
         )
           ? colMetaFromReq.dtxp
           : c.dtxp,
+        cc: colMetaFromReq.cc || c.cc,
         title: colMetaFromReq?.title || getColumnNameAlias(c.cn, base),
         column_name: c.cn,
         order: i + 1,
