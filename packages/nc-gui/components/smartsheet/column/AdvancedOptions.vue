@@ -104,5 +104,9 @@ vModel.value.au = !!vModel.value.au
       <a-textarea v-model:value="vModel.cdf" auto-size @input="onAlter(2, true)" />
       <span class="text-gray-400 text-xs">{{ sampleValue }}</span>
     </a-form-item>
+
+    <a-form-item :label="$t('labels.description')">
+      <a-textarea v-model:value="vModel.cc" auto-size @input="onAlter(2, true)" />
+    </a-form-item>
   </div>
 </template>

@@ -21,7 +21,7 @@ const replacePackageName = (filePath) => {
 }
 
 const bumbVersionAndSave = () => {
-    const nocodbSdkPackageVersion = execSync(`npm view ${ncLibPackage.name} version`).toString().trim()
+    // const nocodbSdkPackageVersion = execSync(`npm view ${ncLibPackage.name} version`).toString().trim()
     // upgrade nc-lib-gui version in nocodb
     // execSync(`cd packages/nocodb && npm install --save --save-exact ${ncLibPackage.name}@${nocodbSdkPackageVersion}`, {});
     execSync(`cd packages/nocodb && npm install --save --save-exact nc-lib-gui@npm:sgeist-${ncLibPackage.name}@${ncLibPackage.version}`, {});

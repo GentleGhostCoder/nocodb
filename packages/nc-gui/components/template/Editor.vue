@@ -800,6 +800,12 @@ function handleCheckAllRecord(event: CheckboxChangeEvent, tableName: string) {
                     Options
                   </span>
                 </template>
+
+                <template v-else-if="column.key === 'cc'">
+                  <span>
+                    {{ $t('labels.description') }}
+                  </span>
+                </template>
               </template>
 
               <template #bodyCell="{ column, record }">
@@ -838,6 +844,12 @@ function handleCheckAllRecord(event: CheckboxChangeEvent, tableName: string) {
                 <template v-else-if="column.key === 'dtxp'">
                   <a-form-item v-if="isSelect(record)">
                     <a-input v-model:value="record.dtxp" />
+                  </a-form-item>
+                </template>
+
+                <template v-else-if="column.key === 'cc'">
+                  <a-form-item>
+                    <a-input v-model:value="record.cc" />
                   </a-form-item>
                 </template>
 
