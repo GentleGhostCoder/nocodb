@@ -24,6 +24,7 @@ const bumbVersionAndSave = () => {
     // const nocodbSdkPackageVersion = execSync(`npm view ${ncLibPackage.name} version`).toString().trim()
     // upgrade nc-lib-gui version in nocodb
     // execSync(`cd packages/nocodb && npm install --save --save-exact ${ncLibPackage.name}@${nocodbSdkPackageVersion}`, {});
+    execSync(`cd packages/nocodb && npm install`, {});
     const nocodbPackageFilePath = path.join(__dirname, '..', 'packages', 'nocodb', 'package.json')
     const nocoLibPackage = JSON.parse(fs.readFileSync(nocodbPackageFilePath))
     if (process.env.targetEnv === 'DEV') {
