@@ -120,6 +120,21 @@ export default class RestAuthCtrl {
     return this.dbDriver('xc_users');
   }
 
+  async ldapSignin(req, res) {
+    try {
+      const user = await passport.authenticate('ldapauth', req, res);
+      // Perform any additional checks or transformations here, if needed
+      // ...
+      // Sign the user in and send tokens
+      const tokens = await passport.signTokens(user);
+      passport.sendTokens(res, tokens);
+    } catch (err) {
+      res
+        .status(401)
+        .json({ msg: 'LDAP authentication failed', error: err.message });
+    }
+  }
+
   async init() {
     await this.loadLatestApiTokens();
     await this.createAuthTableIfNotExists();
@@ -129,6 +144,28 @@ export default class RestAuthCtrl {
     this.app.router.use(passport.initialize());
 
     const jwtMiddleware = passport.authenticate('jwt', { session: false });
+
+    // Import the required modules at the top of the file
+    const LDAPStrategy = require('passport-ldapauth').Strategy;
+
+    // initialize the LDAP strategy
+    passport.use(
+      'ldapauth',
+      new LDAPStrategy({
+        server: {
+          url: 'ldap://example.com:389', // Replace with your LDAP server URL
+          bindDN: 'cn=admin,dc=example,dc=com', // Replace with your LDAP bind DN
+          bindCredentials: 'password', // Replace with your LDAP bind credentials
+          searchBase: 'ou=users,dc=example,dc=com', // Replace with your LDAP search base
+          searchFilter: '(uid={{username}})', // Replace with your LDAP search filter
+        },
+        // Optional: Map LDAP attributes to user object
+        usernameField: 'email',
+        passwordField: 'password',
+      })
+    );
+
+    this.app.router.post('/auth/ldap/signin', this.ldapSignin.bind(this));
 
     this.app.router.get('/password/reset/:token', async function (req, res) {
       res.send(
