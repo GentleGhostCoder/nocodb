@@ -2731,6 +2731,50 @@ export class Api<
       }),
 
     /**
+     * @description Authenticate existing user with their email and password. Successful login will return a JWT access-token.
+     *
+     * @tags Auth
+     * @name ldapSignin
+     * @summary ldapSignin
+     * @request POST:/api/v1/auth/user/ldap-signin
+     * @response `200` `{
+  \**
+     * The signed JWT token for information exchange
+     * @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IndAbm9jb2RiLmNvbSIsImZpcnN0bmFtZSI6bnVsbCwibGFzdG5hbWUiOm51bGwsImlkIjoidXNfYjN4bzJpNDRueDV5OWwiLCJyb2xlcyI6Im9yZy1sZXZlbC1jcmVhdG9yLHN1cGVyIiwidG9rZW5fdmVyc2lvbiI6ImJmMTc3ZGUzYjk3YjAzMjY4YjU0NGZmMjMzNGU5YjFhMGUzYzgxM2NiYzliOTJkYWMwYmM5NTRiNmUzN2ZjMTJjYmFkNDM2NmIwYzExZTdjIiwiaWF0IjoxNjc4MDc4NDMyLCJleHAiOjE2NzgxMTQ0MzJ9.gzwp_svZlbA5PV_eawYV-9UFjZVjniy-tCDce16xrkI
+     *\
+     token?: string,
+
+     }` OK
+     * @response `400` `{
+  \** @example BadRequest [Error]: <ERROR MESSAGE> *\
+  msg: string,
+
+}`
+     */
+       ldapSignin: (data: SignInReqType, params: RequestParams = {}) =>
+      this.request<
+        {
+          /**
+           * The signed JWT token for information exchange
+           * @example eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6IndAbm9jb2RiLmNvbSIsImZpcnN0bmFtZSI6bnVsbCwibGFzdG5hbWUiOm51bGwsImlkIjoidXNfYjN4bzJpNDRueDV5OWwiLCJyb2xlcyI6Im9yZy1sZXZlbC1jcmVhdG9yLHN1cGVyIiwidG9rZW5fdmVyc2lvbiI6ImJmMTc3ZGUzYjk3YjAzMjY4YjU0NGZmMjMzNGU5YjFhMGUzYzgxM2NiYzliOTJkYWMwYmM5NTRiNmUzN2ZjMTJjYmFkNDM2NmIwYzExZTdjIiwiaWF0IjoxNjc4MDc4NDMyLCJleHAiOjE2NzgxMTQ0MzJ9.gzwp_svZlbA5PV_eawYV-9UFjZVjniy-tCDce16xrkI
+           */
+          token?: string;
+        },
+        {
+          /** @example BadRequest [Error]: <ERROR MESSAGE> */
+          msg: string;
+        }
+      >({
+        // Replace this path with your actual API endpoint for LDAP authentication
+        path: `/api/v1/auth/user/ldap-signin`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+      /**
  * @description Returns authenticated user info
  *
  * @tags Auth
