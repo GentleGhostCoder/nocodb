@@ -67,6 +67,25 @@ async function signIn() {
   })
 }
 
+// Add this new function
+async function ldapSignIn() {
+  if (!formValidator.value.validate()) return
+
+  resetError()
+
+  // Call your API endpoint for LDAP authentication
+  api.auth
+    .ldapSignin(form)
+    .then(async ({ token }: any) => {
+      _signIn(token!)
+
+      await navigateTo('/')
+    })
+    .catch((e: any) => {
+      error.value = e.message || t('msg.error.loginFailed')
+    })
+}
+
 function resetError() {
   if (error.value) error.value = null
 }
@@ -128,6 +147,11 @@ function resetError() {
                 <component :is="iconMap.signin" />
                 {{ $t('general.signIn') }}
               </span>
+            </button>
+
+            <!-- Add LDAP Sign-in button -->
+            <button class="scaling-btn bg-opacity-100" @click="ldapSignIn">
+              {{ $t('labels.signInWithLDAP') }}
             </button>
 
             <a
