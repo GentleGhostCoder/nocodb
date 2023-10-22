@@ -67,26 +67,6 @@ async function signIn() {
   })
 }
 
-// Add this new function
-async function signinLdap() {
-  if (!formValidator.value.validate()) return
-
-  resetError()
-
-  // Call your API endpoint for LDAP authentication
-  api.auth
-    .signinLdap(form)
-    .then(async ({ token }: any) => {
-      _signIn(token!)
-
-      await navigateTo('/')
-    })
-    .catch((_: any) => {
-      signIn()
-      // error.value = e.message || t('msg.error.loginFailed')
-    })
-}
-
 function resetError() {
   if (error.value) error.value = null
 }
@@ -105,7 +85,7 @@ function resetError() {
 
         <h1 class="prose-2xl font-bold self-center my-4">{{ $t('general.signIn') }}</h1>
 
-        <a-form ref="formValidator" :model="form" layout="vertical" no-style @finish="signinLdap">
+        <a-form ref="formValidator" :model="form" layout="vertical" no-style @finish="signIn">
           <Transition name="layout">
             <div v-if="error" class="self-center mb-4 bg-red-500 text-white rounded-lg w-3/4 mx-auto p-1">
               <div class="flex items-center gap-2 justify-center">
@@ -149,11 +129,6 @@ function resetError() {
                 {{ $t('general.signIn') }}
               </span>
             </button>
-
-            <!-- Add LDAP Sign-in button -->
-            <!--            <button class="scaling-btn bg-opacity-100" @click="signinLdap"> -->
-            <!--              {{ $t('labels.signInWithLDAP') }} -->
-            <!--            </button> -->
 
             <a
               v-if="appInfo.googleAuthEnabled"
