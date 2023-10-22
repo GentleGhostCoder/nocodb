@@ -1506,6 +1506,13 @@ async function createLTARColumn(param: {
 
     let foreignKeyName;
     {
+      // raise error if parent has not primary key
+      if (!parent.primaryKey) {
+        throw new Error(
+          `Parent model ${parent.table_name} does not have primary key`
+        );
+      }
+
       // create foreign key
       const newColumn = {
         cn: fkColName,

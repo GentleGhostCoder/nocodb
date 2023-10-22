@@ -42,7 +42,7 @@ export default `<!DOCTYPE html>
                             Sign In
                         </v-btn>
 												<!-- Add this button inside the v-form component -->
-												<v-btn large @click="ldapSignin">Sign In with LDAP</v-btn>
+												<v-btn large @click="signinLdap">Sign In with LDAP</v-btn>
                     </v-form>
 
                     <br>
@@ -90,9 +90,9 @@ export default `<!DOCTYPE html>
           }
         }
       },
-      async ldapSignin() {
+      async signinLdap() {
 			  try {
-			    const res = await axios.post('<%- baseUrl %>auth/ldap/signin', this.formdata);
+			    const res = await axios.post('<%- baseUrl %>auth/signin/ldap', this.formdata);
 			    this.success = res.data;
 			  } catch (e) {
 			    if (e.response && e.response.data && e.response.data.msg) {

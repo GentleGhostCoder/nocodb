@@ -98,6 +98,22 @@ async function signin(req, res, next) {
   )(req, res, next);
 }
 
+async function signinLdap(req, res, next) {
+  passport.authenticate(
+    'ldapauth',
+    { session: false },
+    async (err, user, info): Promise<any> =>
+      await successfulSignIn({
+        user,
+        err,
+        info,
+        req,
+        res,
+        auditDescription: 'User has signed in successfully using LDAP',
+      })
+  )(req, res, next);
+}
+
 async function signout(req: Request<any, any>, res): Promise<any> {
   res.json(
     await userService.signout({
@@ -198,6 +214,7 @@ const mapRoutes = (router) => {
   // todo: old api - /auth/signup?tool=1
   router.post('/auth/user/signup', catchError(signup));
   router.post('/auth/user/signin', catchError(signin));
+  router.post('/auth/user/signin/ldap', catchError(signinLdap));
   router.get('/auth/user/me', extractProjectIdAndAuthenticate, catchError(me));
   router.post('/auth/password/forgot', catchError(passwordForgot));
   router.post('/auth/token/validate/:tokenId', catchError(tokenValidate));
@@ -224,6 +241,7 @@ const mapRoutes = (router) => {
   // deprecated APIs
   router.post('/api/v1/db/auth/user/signup', catchError(signup));
   router.post('/api/v1/db/auth/user/signin', catchError(signin));
+  router.post('/api/v1/db/auth/user/signin/ldap', catchError(signinLdap));
   router.get(
     '/api/v1/db/auth/user/me',
     extractProjectIdAndAuthenticate,
@@ -255,6 +273,7 @@ const mapRoutes = (router) => {
   // new API
   router.post('/api/v1/auth/user/signup', catchError(signup));
   router.post('/api/v1/auth/user/signin', catchError(signin));
+  router.post('/api/v1/auth/user/signin/ldap', catchError(signinLdap));
   router.post('/api/v1/auth/user/signout', catchError(signout));
   router.get(
     '/api/v1/auth/user/me',

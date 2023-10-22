@@ -38,16 +38,16 @@ const formRules: Record<string, RuleObject[]> = {
     // E-mail is required
     { required: true, message: t('msg.error.signUpRules.emailReqd') },
     // E-mail must be valid format
-    {
-      validator: (_: unknown, v: string) => {
-        return new Promise((resolve, reject) => {
-          if (validateEmail(v)) return resolve()
-
-          reject(new Error(t('msg.error.signUpRules.emailInvalid')))
-        })
-      },
-      message: t('msg.error.signUpRules.emailInvalid'),
-    },
+    // {
+    //   validator: (_: unknown, v: string) => {
+    //     return new Promise((resolve, reject) => {
+    //       if (validateEmail(v)) return resolve()
+    //
+    //       reject(new Error(t('msg.error.signUpRules.emailInvalid')))
+    //     })
+    //   },
+    //   message: t('msg.error.signUpRules.emailInvalid'),
+    // },
   ],
   password: [
     // Password is required
@@ -68,21 +68,22 @@ async function signIn() {
 }
 
 // Add this new function
-async function ldapSignIn() {
+async function signinLdap() {
   if (!formValidator.value.validate()) return
 
   resetError()
 
   // Call your API endpoint for LDAP authentication
   api.auth
-    .ldapSignin(form)
+    .signinLdap(form)
     .then(async ({ token }: any) => {
       _signIn(token!)
 
       await navigateTo('/')
     })
-    .catch((e: any) => {
-      error.value = e.message || t('msg.error.loginFailed')
+    .catch((_: any) => {
+      signIn()
+      // error.value = e.message || t('msg.error.loginFailed')
     })
 }
 
@@ -104,7 +105,7 @@ function resetError() {
 
         <h1 class="prose-2xl font-bold self-center my-4">{{ $t('general.signIn') }}</h1>
 
-        <a-form ref="formValidator" :model="form" layout="vertical" no-style @finish="signIn">
+        <a-form ref="formValidator" :model="form" layout="vertical" no-style @finish="signinLdap">
           <Transition name="layout">
             <div v-if="error" class="self-center mb-4 bg-red-500 text-white rounded-lg w-3/4 mx-auto p-1">
               <div class="flex items-center gap-2 justify-center">
@@ -150,9 +151,9 @@ function resetError() {
             </button>
 
             <!-- Add LDAP Sign-in button -->
-            <button class="scaling-btn bg-opacity-100" @click="ldapSignIn">
-              {{ $t('labels.signInWithLDAP') }}
-            </button>
+            <!--            <button class="scaling-btn bg-opacity-100" @click="signinLdap"> -->
+            <!--              {{ $t('labels.signInWithLDAP') }} -->
+            <!--            </button> -->
 
             <a
               v-if="appInfo.googleAuthEnabled"

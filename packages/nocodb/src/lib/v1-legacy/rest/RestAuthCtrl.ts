@@ -120,9 +120,28 @@ export default class RestAuthCtrl {
     return this.dbDriver('xc_users');
   }
 
-  async ldapSignin(req, res) {
+  async signinLdap(req, res) {
     try {
-      const user = await passport.authenticate('ldapauth', req, res);
+      const user = await passport.authenticate(
+        'ldapauth',
+        req,
+        (error, user, info) => {
+          console.log(user);
+          console.log(info);
+          if (error) {
+            // An error means the server is not reachable
+            console.log(error);
+            return false;
+          } else if (user) {
+            // If a user object is returned, it means the server is reachable
+            return true;
+          } else {
+            // If no error and no user, it could be a problem with the bind DN or credentials
+            console.log(new Error(info.message));
+            return false;
+          }
+        }
+      );
       // Perform any additional checks or transformations here, if needed
       // ...
       // Sign the user in and send tokens
@@ -148,24 +167,51 @@ export default class RestAuthCtrl {
     // Import the required modules at the top of the file
     const LDAPStrategy = require('passport-ldapauth').Strategy;
 
+    const ldapOptions = {
+      server: {
+        url: 'ldap://localhost:389', // Replace with your LDAP server URL
+        timeout: 150,
+        bindDN: 'cn=admin,dc=myorg,dc=com', // Replace with your LDAP bind DN
+        bindCredentials: 'mysecretpassword', // Replace with your LDAP bind credentials
+        searchBase: 'dc=myorg,dc=com', // Replace with your LDAP search base
+        searchFilter: '(uid={{username}})', // Replace with your LDAP search filter
+      },
+      // // Optional: Map LDAP attributes to user object
+      usernameField: 'email',
+      passwordField: 'password',
+    };
+
+    // Testing the LDAP connection
+    function testLdapConnection(req, res) {
+      passport.authenticate('ldapauth', function (err, user, info) {
+        if (err) {
+          console.log('LDAP connection failed:', err);
+          return;
+        }
+        if (!user) {
+          console.log('LDAP connection failed:', info);
+          return;
+        }
+        console.log('LDAP connection successful:', user);
+      })(req, res);
+    }
+
+    const ldapStrategy = new LDAPStrategy(ldapOptions);
+
     // initialize the LDAP strategy
-    passport.use(
-      'ldapauth',
-      new LDAPStrategy({
-        server: {
-          url: 'ldap://example.com:389', // Replace with your LDAP server URL
-          bindDN: 'cn=admin,dc=example,dc=com', // Replace with your LDAP bind DN
-          bindCredentials: 'password', // Replace with your LDAP bind credentials
-          searchBase: 'ou=users,dc=example,dc=com', // Replace with your LDAP search base
-          searchFilter: '(uid={{username}})', // Replace with your LDAP search filter
+    passport.use('ldapauth', ldapStrategy);
+
+    testLdapConnection(
+      {
+        body: {
+          username: 'user01',
+          password: 'password1',
         },
-        // Optional: Map LDAP attributes to user object
-        usernameField: 'email',
-        passwordField: 'password',
-      })
+      },
+      {}
     );
 
-    this.app.router.post('/auth/ldap/signin', this.ldapSignin.bind(this));
+    this.app.router.post('/api/v1/db/auth/user/signin/ldap', this.signinLdap);
 
     this.app.router.get('/password/reset/:token', async function (req, res) {
       res.send(

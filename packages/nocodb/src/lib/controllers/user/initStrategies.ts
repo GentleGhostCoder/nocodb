@@ -20,8 +20,50 @@ const jwtOptions = {
 };
 
 const PassportLocalStrategy = require('passport-local').Strategy;
+const LdapStrategy = require('passport-ldapauth').Strategy;
+
+const ldapOptions = {
+  server: {
+    url: 'ldap://rehvmadc01.reh-kendermann.de', // Replace with your LDAP server URL
+    timeout: 150,
+    bindDN: '', // Replace with your LDAP bind DN
+    bindCredentials: '', // Replace with your LDAP bind credentials
+    searchBase: '', // Replace with your LDAP search base
+    searchFilter: '(uid={{username}})', // Replace with your LDAP search filter
+  },
+  // // Optional: Map LDAP attributes to user object
+  usernameField: 'email',
+  passwordField: 'password',
+};
+
+// Testing the LDAP connection
+function testLdapConnection(req, res) {
+  passport.authenticate('ldapauth', function (err, user, info) {
+    if (err) {
+      console.log('LDAP connection failed:', err);
+      return;
+    }
+    if (!user) {
+      console.log('LDAP connection failed:', info);
+      return;
+    }
+    console.log('LDAP connection successful:', user);
+  })(req, res);
+}
 
 export function initStrategies(router): void {
+  passport.use('ldapauth', new LdapStrategy(ldapOptions));
+
+  testLdapConnection(
+    {
+      body: {
+        username: 'user01',
+        password: 'password1',
+      },
+    },
+    {}
+  );
+
   passport.use(
     'authtoken',
     new AuthTokenStrategy(
